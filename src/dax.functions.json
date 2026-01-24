@@ -1,0 +1,1472 @@
+[
+  {
+    "name": "ABS",
+    "group": "Math",
+    "description": "Returns the absolute value of a number",
+    "syntax": "ABS(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ACOS",
+    "group": "Math",
+    "description": "Returns the arccosine, or inverse cosine, of a number",
+    "syntax": "ACOS(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ACOSH",
+    "group": "Math",
+    "description": "Returns the inverse hyperbolic cosine of a number",
+    "syntax": "ACOSH(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ACOT",
+    "group": "Math",
+    "description": "Returns the arccotangent, or inverse cotangent, of a number",
+    "syntax": "ACOT(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ACOTH",
+    "group": "Math",
+    "description": "Returns the inverse hyperbolic cotangent of a number",
+    "syntax": "ACOTH(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ADDCOLUMNS",
+    "group": "Table",
+    "description": "Adds calculated columns to the given table or table expression",
+    "syntax": "ADDCOLUMNS(<table>, <name>, <expression>[, <name>, <expression>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "ADDMISSINGITEMS",
+    "group": "Table",
+    "description": "Adds rows with empty values to a table returned by SUMMARIZECOLUMNS",
+    "syntax": "ADDMISSINGITEMS(<showAll_columnName>, <showAll_columnName>[, <showAll_columnName>]..., <table>)",
+    "returns": "Table"
+  },
+  {
+    "name": "ALL",
+    "group": "Filter",
+    "description": "Returns all the rows in a table, or all the values in a column, ignoring any filters that might have been applied",
+    "syntax": "ALL({<table> | <column>[, <column>[, <column>[, ...]]]})",
+    "returns": "Table"
+  },
+  {
+    "name": "ALLCROSSFILTERED",
+    "group": "Filter",
+    "description": "Clear all filters which are applied to a table",
+    "syntax": "ALLCROSSFILTERED(<table>)",
+    "returns": "Table"
+  },
+  {
+    "name": "ALLEXCEPT",
+    "group": "Filter",
+    "description": "Removes all context filters in the table except filters that are applied to the specified columns",
+    "syntax": "ALLEXCEPT(<table>, <column>[, <column>[, ...]])",
+    "returns": "Table"
+  },
+  {
+    "name": "ALLNOBLANKROW",
+    "group": "Filter",
+    "description": "Returns all rows except blank rows from a table, or all values from a column ignoring filters",
+    "syntax": "ALLNOBLANKROW({<table> | <column>[, <column>[, ...]]})",
+    "returns": "Table"
+  },
+  {
+    "name": "ALLSELECTED",
+    "group": "Filter",
+    "description": "Removes context filters from columns and rows in the current query, while retaining all other context filters or explicit filters",
+    "syntax": "ALLSELECTED([<table> | <column>[, <column>[, <column>[, ...]]]])",
+    "returns": "Table"
+  },
+  {
+    "name": "AND",
+    "group": "Logical",
+    "description": "Checks whether both arguments are TRUE, and returns TRUE if both arguments are TRUE",
+    "syntax": "AND(<logical1>, <logical2>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "APPROXIMATEDISTINCTCOUNT",
+    "group": "Aggregation",
+    "description": "Returns the approximate number of distinct values in a column",
+    "syntax": "APPROXIMATEDISTINCTCOUNT(<column>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "ASIN",
+    "group": "Math",
+    "description": "Returns the arcsine, or inverse sine, of a number",
+    "syntax": "ASIN(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ASINH",
+    "group": "Math",
+    "description": "Returns the inverse hyperbolic sine of a number",
+    "syntax": "ASINH(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ATAN",
+    "group": "Math",
+    "description": "Returns the arctangent, or inverse tangent, of a number",
+    "syntax": "ATAN(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ATANH",
+    "group": "Math",
+    "description": "Returns the inverse hyperbolic tangent of a number",
+    "syntax": "ATANH(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "AVERAGE",
+    "group": "Aggregation",
+    "description": "Returns the average (arithmetic mean) of all the numbers in a column",
+    "syntax": "AVERAGE(<column>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "AVERAGEA",
+    "group": "Aggregation",
+    "description": "Returns the average (arithmetic mean) of the values in a column, handles text and non-numeric values",
+    "syntax": "AVERAGEA(<column>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "AVERAGEX",
+    "group": "Aggregation",
+    "description": "Calculates the average (arithmetic mean) of a set of expressions evaluated over a table",
+    "syntax": "AVERAGEX(<table>, <expression>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "BLANK",
+    "group": "Other",
+    "description": "Returns a blank value",
+    "syntax": "BLANK()",
+    "returns": "Blank"
+  },
+  {
+    "name": "CALCULATE",
+    "group": "Filter",
+    "description": "Evaluates an expression in a context modified by filters",
+    "syntax": "CALCULATE(<expression>[, <filter1> [, <filter2> [, ...]]])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "CALCULATETABLE",
+    "group": "Filter",
+    "description": "Evaluates a table expression in a context modified by filters",
+    "syntax": "CALCULATETABLE(<table>[, <filter1> [, <filter2> [, ...]]])",
+    "returns": "Table"
+  },
+  {
+    "name": "CALENDAR",
+    "group": "Date",
+    "description": "Returns a table with a single column of dates from a specified start date to end date",
+    "syntax": "CALENDAR(<start_date>, <end_date>)",
+    "returns": "Table"
+  },
+  {
+    "name": "CALENDARAUTO",
+    "group": "Date",
+    "description": "Returns a table with a single column of dates calculated automatically from the model",
+    "syntax": "CALENDARAUTO([<fiscal_year_end_month>])",
+    "returns": "Table"
+  },
+  {
+    "name": "CEILING",
+    "group": "Math",
+    "description": "Rounds a number up, to the nearest integer or nearest multiple of significance",
+    "syntax": "CEILING(<number>, <significance>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "COALESCE",
+    "group": "Logical",
+    "description": "Returns the first expression that does not evaluate to BLANK",
+    "syntax": "COALESCE(<expression>, <expression>[, <expression>]...)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "COMBINEVALUES",
+    "group": "Text",
+    "description": "Joins two or more text strings into one text string with a specified delimiter",
+    "syntax": "COMBINEVALUES(<delimiter>, <expression>, <expression>[, <expression>]...)",
+    "returns": "String"
+  },
+  {
+    "name": "CONCATENATE",
+    "group": "Text",
+    "description": "Joins two text strings into one text string",
+    "syntax": "CONCATENATE(<text1>, <text2>)",
+    "returns": "String"
+  },
+  {
+    "name": "CONCATENATEX",
+    "group": "Text",
+    "description": "Concatenates strings from multiple rows with an optional delimiter",
+    "syntax": "CONCATENATEX(<table>, <expression>[, <delimiter>][, <orderBy_expression>, <order>]...)",
+    "returns": "String"
+  },
+  {
+    "name": "CONTAINS",
+    "group": "Table",
+    "description": "Returns TRUE if values for all referred columns exist in those columns",
+    "syntax": "CONTAINS(<table>, <columnName>, <value>[, <columnName>, <value>]...)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "CONTAINSROW",
+    "group": "Table",
+    "description": "Returns TRUE if a row of values exists or contained in a table",
+    "syntax": "CONTAINSROW(<table>, <value>[, <value>]...)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "CONTAINSSTRING",
+    "group": "Text",
+    "description": "Returns TRUE if a specified string is found within a column",
+    "syntax": "CONTAINSSTRING(<column>, <substring>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "COUNT",
+    "group": "Aggregation",
+    "description": "Counts the number of cells in a column that contain numbers",
+    "syntax": "COUNT(<column>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "COUNTA",
+    "group": "Aggregation",
+    "description": "Counts the number of cells in a column that are not empty",
+    "syntax": "COUNTA(<column>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "COUNTAX",
+    "group": "Aggregation",
+    "description": "Counts non-blank results when evaluating the result of an expression over a table",
+    "syntax": "COUNTAX(<table>, <expression>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "COUNTBLANK",
+    "group": "Aggregation",
+    "description": "Counts the number of blank cells in a column",
+    "syntax": "COUNTBLANK(<column>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "COUNTROWS",
+    "group": "Aggregation",
+    "description": "Counts the number of rows in the specified table or table expression",
+    "syntax": "COUNTROWS([<table>])",
+    "returns": "Integer"
+  },
+  {
+    "name": "COUNTX",
+    "group": "Aggregation",
+    "description": "Counts the number of rows that contain a non-blank value or expression",
+    "syntax": "COUNTX(<table>, <expression>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "CROSSFILTER",
+    "group": "Relationship",
+    "description": "Specifies the cross-filtering direction to be used in a calculation",
+    "syntax": "CROSSFILTER(<columnName1>, <columnName2>, <direction>)",
+    "returns": "Filter"
+  },
+  {
+    "name": "CROSSJOIN",
+    "group": "Table",
+    "description": "Returns a table that contains the Cartesian product of all rows from all tables",
+    "syntax": "CROSSJOIN(<table>, <table>[, <table>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "CURRENCY",
+    "group": "Math",
+    "description": "Evaluates the argument and returns the result as currency data type",
+    "syntax": "CURRENCY(<value>)",
+    "returns": "Currency"
+  },
+  {
+    "name": "CURRENTGROUP",
+    "group": "Table",
+    "description": "Returns the current group in a GROUPBY or SUMMARIZE expression",
+    "syntax": "CURRENTGROUP()",
+    "returns": "Table"
+  },
+  {
+    "name": "CUSTOMDATA",
+    "group": "Other",
+    "description": "Returns the CustomData string stored in the connection string",
+    "syntax": "CUSTOMDATA()",
+    "returns": "String"
+  },
+  {
+    "name": "DATE",
+    "group": "Date",
+    "description": "Returns the specified date in datetime format",
+    "syntax": "DATE(<year>, <month>, <day>)",
+    "returns": "DateTime"
+  },
+  {
+    "name": "DATEADD",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates shifted by the specified number of intervals",
+    "syntax": "DATEADD(<dates>, <number_of_intervals>, <interval>)",
+    "returns": "Table"
+  },
+  {
+    "name": "DATEDIFF",
+    "group": "Date",
+    "description": "Returns the count of interval boundaries crossed between two dates",
+    "syntax": "DATEDIFF(<date1>, <date2>, <interval>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "DATESBETWEEN",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates between the specified start date and end date",
+    "syntax": "DATESBETWEEN(<dates>, <start_date>, <end_date>)",
+    "returns": "Table"
+  },
+  {
+    "name": "DATESINPERIOD",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates in the period specified",
+    "syntax": "DATESINPERIOD(<dates>, <start_date>, <number_of_intervals>, <interval>)",
+    "returns": "Table"
+  },
+  {
+    "name": "DATESMTD",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates for the month to date",
+    "syntax": "DATESMTD(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "DATESQTD",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates for the quarter to date",
+    "syntax": "DATESQTD(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "DATESYTD",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates for the year to date",
+    "syntax": "DATESYTD(<dates>[, <year_end_date>])",
+    "returns": "Table"
+  },
+  {
+    "name": "DATEVALUE",
+    "group": "Date",
+    "description": "Converts a date in text format to a date in datetime format",
+    "syntax": "DATEVALUE(<date_text>)",
+    "returns": "DateTime"
+  },
+  {
+    "name": "DAY",
+    "group": "Date",
+    "description": "Returns the day of the month, a number from 1 to 31",
+    "syntax": "DAY(<date>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "DISTINCT",
+    "group": "Table",
+    "description": "Returns a one column table with distinct values from the specified column",
+    "syntax": "DISTINCT(<column>)",
+    "returns": "Table"
+  },
+  {
+    "name": "DISTINCTCOUNT",
+    "group": "Aggregation",
+    "description": "Counts the number of distinct values in a column",
+    "syntax": "DISTINCTCOUNT(<column>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "DIVIDE",
+    "group": "Math",
+    "description": "Performs division and returns an alternate result or BLANK on division by zero",
+    "syntax": "DIVIDE(<numerator>, <denominator>[, <alternateresult>])",
+    "returns": "Decimal"
+  },
+  {
+    "name": "EARLIER",
+    "group": "Other",
+    "description": "Returns the current value of the specified column in an outer evaluation pass",
+    "syntax": "EARLIER(<column>[, <num>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "EARLIEST",
+    "group": "Other",
+    "description": "Returns the current value of the specified column in the outermost evaluation pass",
+    "syntax": "EARLIEST(<column>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "EDATE",
+    "group": "Date",
+    "description": "Returns the date that is the indicated number of months before or after the start date",
+    "syntax": "EDATE(<start_date>, <months>)",
+    "returns": "DateTime"
+  },
+  {
+    "name": "ENDOFMONTH",
+    "group": "Time Intelligence",
+    "description": "Returns the last date of the month in the current context",
+    "syntax": "ENDOFMONTH(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "ENDOFQUARTER",
+    "group": "Time Intelligence",
+    "description": "Returns the last date of the quarter in the current context",
+    "syntax": "ENDOFQUARTER(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "ENDOFYEAR",
+    "group": "Time Intelligence",
+    "description": "Returns the last date of the year in the current context",
+    "syntax": "ENDOFYEAR(<dates>[, <year_end_date>])",
+    "returns": "Table"
+  },
+  {
+    "name": "EOMONTH",
+    "group": "Date",
+    "description": "Returns the date in datetime format of the last day of the month",
+    "syntax": "EOMONTH(<start_date>, <months>)",
+    "returns": "DateTime"
+  },
+  {
+    "name": "ERROR",
+    "group": "Other",
+    "description": "Raises an error with an error message",
+    "syntax": "ERROR(<error_text>)",
+    "returns": "None"
+  },
+  {
+    "name": "EXACT",
+    "group": "Text",
+    "description": "Compares two text strings and returns TRUE if they are exactly the same",
+    "syntax": "EXACT(<text1>, <text2>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "EXCEPT",
+    "group": "Table",
+    "description": "Returns the rows of one table which do not appear in another table",
+    "syntax": "EXCEPT(<table1>, <table2>)",
+    "returns": "Table"
+  },
+  {
+    "name": "EXP",
+    "group": "Math",
+    "description": "Returns e raised to the power of a given number",
+    "syntax": "EXP(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "FACT",
+    "group": "Math",
+    "description": "Returns the factorial of a number",
+    "syntax": "FACT(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "FALSE",
+    "group": "Logical",
+    "description": "Returns the logical value FALSE",
+    "syntax": "FALSE()",
+    "returns": "Boolean"
+  },
+  {
+    "name": "FILTER",
+    "group": "Filter",
+    "description": "Returns a table that has been filtered",
+    "syntax": "FILTER(<table>, <filter>)",
+    "returns": "Table"
+  },
+  {
+    "name": "FILTERS",
+    "group": "Filter",
+    "description": "Returns the values that are directly applied as filters",
+    "syntax": "FILTERS(<column>)",
+    "returns": "Table"
+  },
+  {
+    "name": "FIND",
+    "group": "Text",
+    "description": "Returns the starting position of one text string within another (case-sensitive)",
+    "syntax": "FIND(<find_text>, <within_text>[, <start_num>][, <NotFoundValue>])",
+    "returns": "Integer"
+  },
+  {
+    "name": "FIRSTDATE",
+    "group": "Time Intelligence",
+    "description": "Returns the first date in the current context",
+    "syntax": "FIRSTDATE(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "FIRSTNONBLANK",
+    "group": "Time Intelligence",
+    "description": "Returns the first value in the column for which the expression has a non-blank value",
+    "syntax": "FIRSTNONBLANK(<column>, <expression>)",
+    "returns": "Table"
+  },
+  {
+    "name": "FIRSTNONBLANKVALUE",
+    "group": "Time Intelligence",
+    "description": "Returns the first non-blank value of the expression evaluated for each row",
+    "syntax": "FIRSTNONBLANKVALUE(<column>, <expression>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "FIXED",
+    "group": "Text",
+    "description": "Rounds a number to the specified number of decimals and returns the result as text",
+    "syntax": "FIXED(<number>, <decimals>, <no_commas>)",
+    "returns": "String"
+  },
+  {
+    "name": "FLOOR",
+    "group": "Math",
+    "description": "Rounds a number down, toward zero, to the nearest multiple of significance",
+    "syntax": "FLOOR(<number>, <significance>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "FORMAT",
+    "group": "Text",
+    "description": "Converts a value to text according to the specified format",
+    "syntax": "FORMAT(<value>, <format_string>)",
+    "returns": "String"
+  },
+  {
+    "name": "GENERATE",
+    "group": "Table",
+    "description": "Returns a table with the Cartesian product of all rows from the first table, evaluating the second table for each row",
+    "syntax": "GENERATE(<table1>, <table2>)",
+    "returns": "Table"
+  },
+  {
+    "name": "GENERATEALL",
+    "group": "Table",
+    "description": "Returns a table with the Cartesian product including rows for which the second table expression is empty",
+    "syntax": "GENERATEALL(<table1>, <table2>)",
+    "returns": "Table"
+  },
+  {
+    "name": "GENERATESERIES",
+    "group": "Table",
+    "description": "Returns a single column table with a series of numbers",
+    "syntax": "GENERATESERIES(<start>, <end>[, <increment>])",
+    "returns": "Table"
+  },
+  {
+    "name": "GROUPBY",
+    "group": "Table",
+    "description": "Groups rows and applies aggregate expressions without row context transitions",
+    "syntax": "GROUPBY(<table>[, <groupBy_columnName>[, <groupBy_columnName>[, ...]]][, <name>, <expression>[, <name>, <expression>[, ...]]])",
+    "returns": "Table"
+  },
+  {
+    "name": "HASONEFILTER",
+    "group": "Filter",
+    "description": "Returns TRUE when the number of directly filtered values on columnName is one",
+    "syntax": "HASONEFILTER(<columnName>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "HASONEVALUE",
+    "group": "Filter",
+    "description": "Returns TRUE when there is only one value in the specified column",
+    "syntax": "HASONEVALUE(<columnName>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "HOUR",
+    "group": "Date",
+    "description": "Returns the hour as a number from 0 to 23",
+    "syntax": "HOUR(<datetime>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "IF",
+    "group": "Logical",
+    "description": "Checks if a condition is met, and returns one value if TRUE and another if FALSE",
+    "syntax": "IF(<logical_test>, <value_if_true>[, <value_if_false>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "IFERROR",
+    "group": "Logical",
+    "description": "Returns value_if_error if the first expression is an error, otherwise returns the expression itself",
+    "syntax": "IFERROR(<value>, <value_if_error>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "IGNORE",
+    "group": "Table",
+    "description": "Modifies SUMMARIZECOLUMNS to omit specific expressions from the BLANK/NULL evaluation",
+    "syntax": "IGNORE(<expression>)",
+    "returns": "Expression"
+  },
+  {
+    "name": "INT",
+    "group": "Math",
+    "description": "Rounds a number down to the nearest integer",
+    "syntax": "INT(<number>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "INTERSECT",
+    "group": "Table",
+    "description": "Returns the rows that appear in both tables",
+    "syntax": "INTERSECT(<table1>, <table2>)",
+    "returns": "Table"
+  },
+  {
+    "name": "ISBLANK",
+    "group": "Information",
+    "description": "Checks whether a value is blank, and returns TRUE or FALSE",
+    "syntax": "ISBLANK(<value>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISCROSSFILTERED",
+    "group": "Information",
+    "description": "Returns TRUE when columnName or another column in the same or related table is being filtered",
+    "syntax": "ISCROSSFILTERED(<columnName>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISEMPTY",
+    "group": "Information",
+    "description": "Checks if a table is empty",
+    "syntax": "ISEMPTY(<table>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISERROR",
+    "group": "Information",
+    "description": "Checks whether a value is an error, and returns TRUE or FALSE",
+    "syntax": "ISERROR(<value>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISEVEN",
+    "group": "Math",
+    "description": "Returns TRUE if the number is even",
+    "syntax": "ISEVEN(<number>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISFILTERED",
+    "group": "Information",
+    "description": "Returns TRUE when columnName is being filtered directly",
+    "syntax": "ISFILTERED(<columnName>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISINSCOPE",
+    "group": "Information",
+    "description": "Returns TRUE when the specified column is in the filter context",
+    "syntax": "ISINSCOPE(<columnName>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISLOGICAL",
+    "group": "Information",
+    "description": "Checks whether a value is a logical value, and returns TRUE or FALSE",
+    "syntax": "ISLOGICAL(<value>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISNONTEXT",
+    "group": "Information",
+    "description": "Checks whether a value is not text, and returns TRUE or FALSE",
+    "syntax": "ISNONTEXT(<value>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISNUMBER",
+    "group": "Information",
+    "description": "Checks whether a value is a number, and returns TRUE or FALSE",
+    "syntax": "ISNUMBER(<value>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISODD",
+    "group": "Math",
+    "description": "Returns TRUE if the number is odd",
+    "syntax": "ISODD(<number>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "ISTEXT",
+    "group": "Information",
+    "description": "Checks whether a value is text, and returns TRUE or FALSE",
+    "syntax": "ISTEXT(<value>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "KEEPFILTERS",
+    "group": "Filter",
+    "description": "Modifies how filters are applied while evaluating a CALCULATE or CALCULATETABLE function",
+    "syntax": "KEEPFILTERS(<expression>)",
+    "returns": "Filter"
+  },
+  {
+    "name": "LASTDATE",
+    "group": "Time Intelligence",
+    "description": "Returns the last date in the current context",
+    "syntax": "LASTDATE(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "LASTNONBLANK",
+    "group": "Time Intelligence",
+    "description": "Returns the last value in the column for which the expression has a non-blank value",
+    "syntax": "LASTNONBLANK(<column>, <expression>)",
+    "returns": "Table"
+  },
+  {
+    "name": "LASTNONBLANKVALUE",
+    "group": "Time Intelligence",
+    "description": "Returns the last non-blank value of the expression evaluated for each row",
+    "syntax": "LASTNONBLANKVALUE(<column>, <expression>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "LEFT",
+    "group": "Text",
+    "description": "Returns the specified number of characters from the start of a text string",
+    "syntax": "LEFT(<text>, <num_chars>)",
+    "returns": "String"
+  },
+  {
+    "name": "LEN",
+    "group": "Text",
+    "description": "Returns the number of characters in a text string",
+    "syntax": "LEN(<text>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "LN",
+    "group": "Math",
+    "description": "Returns the natural logarithm of a number",
+    "syntax": "LN(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "LOG",
+    "group": "Math",
+    "description": "Returns the logarithm of a number to the base you specify",
+    "syntax": "LOG(<number>, <base>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "LOG10",
+    "group": "Math",
+    "description": "Returns the base-10 logarithm of a number",
+    "syntax": "LOG10(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "LOOKUPVALUE",
+    "group": "Filter",
+    "description": "Returns the value for the row that meets all criteria specified by search conditions",
+    "syntax": "LOOKUPVALUE(<result_columnName>, <search_columnName>, <search_value>[, <search_columnName>, <search_value>]...[, <alternateResult>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "LOWER",
+    "group": "Text",
+    "description": "Converts a text string to all lowercase letters",
+    "syntax": "LOWER(<text>)",
+    "returns": "String"
+  },
+  {
+    "name": "MAX",
+    "group": "Aggregation",
+    "description": "Returns the largest value in a column",
+    "syntax": "MAX(<column>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "MAXA",
+    "group": "Aggregation",
+    "description": "Returns the largest value in a column, including logical values and text",
+    "syntax": "MAXA(<column>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "MAXX",
+    "group": "Aggregation",
+    "description": "Returns the largest value from the result of an expression evaluated for each row in a table",
+    "syntax": "MAXX(<table>, <expression>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "MEDIAN",
+    "group": "Statistical",
+    "description": "Returns the median of numbers in a column",
+    "syntax": "MEDIAN(<column>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "MEDIANX",
+    "group": "Statistical",
+    "description": "Returns the median value of an expression evaluated for each row in a table",
+    "syntax": "MEDIANX(<table>, <expression>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "MID",
+    "group": "Text",
+    "description": "Returns a string of characters from the middle of a text string",
+    "syntax": "MID(<text>, <start_num>, <num_chars>)",
+    "returns": "String"
+  },
+  {
+    "name": "MIN",
+    "group": "Aggregation",
+    "description": "Returns the smallest value in a column",
+    "syntax": "MIN(<column>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "MINA",
+    "group": "Aggregation",
+    "description": "Returns the smallest value in a column, including logical values and text",
+    "syntax": "MINA(<column>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "MINUTE",
+    "group": "Date",
+    "description": "Returns the minute as a number from 0 to 59",
+    "syntax": "MINUTE(<datetime>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "MINX",
+    "group": "Aggregation",
+    "description": "Returns the smallest value from the result of an expression evaluated for each row in a table",
+    "syntax": "MINX(<table>, <expression>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "MOD",
+    "group": "Math",
+    "description": "Returns the remainder after a number is divided by a divisor",
+    "syntax": "MOD(<number>, <divisor>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "MONTH",
+    "group": "Date",
+    "description": "Returns the month as a number from 1 to 12",
+    "syntax": "MONTH(<datetime>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "NATURALINNERJOIN",
+    "group": "Table",
+    "description": "Performs an inner join of two tables",
+    "syntax": "NATURALINNERJOIN(<table1>, <table2>)",
+    "returns": "Table"
+  },
+  {
+    "name": "NATURALLEFTOUTERJOIN",
+    "group": "Table",
+    "description": "Performs a left outer join of two tables",
+    "syntax": "NATURALLEFTOUTERJOIN(<table1>, <table2>)",
+    "returns": "Table"
+  },
+  {
+    "name": "NEXTDAY",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the next day",
+    "syntax": "NEXTDAY(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "NEXTMONTH",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the next month",
+    "syntax": "NEXTMONTH(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "NEXTQUARTER",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the next quarter",
+    "syntax": "NEXTQUARTER(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "NEXTYEAR",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the next year",
+    "syntax": "NEXTYEAR(<dates>[, <year_end_date>])",
+    "returns": "Table"
+  },
+  {
+    "name": "NOT",
+    "group": "Logical",
+    "description": "Changes FALSE to TRUE, or TRUE to FALSE",
+    "syntax": "NOT(<logical>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "NOW",
+    "group": "Date",
+    "description": "Returns the current date and time in datetime format",
+    "syntax": "NOW()",
+    "returns": "DateTime"
+  },
+  {
+    "name": "OR",
+    "group": "Logical",
+    "description": "Checks whether one of the arguments is TRUE to return TRUE",
+    "syntax": "OR(<logical1>, <logical2>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "PARALLELPERIOD",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from a parallel period",
+    "syntax": "PARALLELPERIOD(<dates>, <number_of_intervals>, <interval>)",
+    "returns": "Table"
+  },
+  {
+    "name": "PATH",
+    "group": "Parent-child",
+    "description": "Returns a delimited text string with the identifiers of all parents",
+    "syntax": "PATH(<ID_columnName>, <parent_columnName>)",
+    "returns": "String"
+  },
+  {
+    "name": "PATHCONTAINS",
+    "group": "Parent-child",
+    "description": "Returns TRUE if the specified item is present in the path",
+    "syntax": "PATHCONTAINS(<path>, <item>)",
+    "returns": "Boolean"
+  },
+  {
+    "name": "PATHITEM",
+    "group": "Parent-child",
+    "description": "Returns the item at the specified position from a path",
+    "syntax": "PATHITEM(<path>, <position>[, <type>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "PATHITEMREVERSE",
+    "group": "Parent-child",
+    "description": "Returns the item at the specified position from a path, counting backwards",
+    "syntax": "PATHITEMREVERSE(<path>, <position>[, <type>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "PATHLENGTH",
+    "group": "Parent-child",
+    "description": "Returns the number of items in a path",
+    "syntax": "PATHLENGTH(<path>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "POWER",
+    "group": "Math",
+    "description": "Returns the result of a number raised to a power",
+    "syntax": "POWER(<number>, <power>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "PREVIOUSDAY",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the previous day",
+    "syntax": "PREVIOUSDAY(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "PREVIOUSMONTH",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the previous month",
+    "syntax": "PREVIOUSMONTH(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "PREVIOUSQUARTER",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the previous quarter",
+    "syntax": "PREVIOUSQUARTER(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "PREVIOUSYEAR",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the previous year",
+    "syntax": "PREVIOUSYEAR(<dates>[, <year_end_date>])",
+    "returns": "Table"
+  },
+  {
+    "name": "PRODUCT",
+    "group": "Aggregation",
+    "description": "Returns the product of the numbers in a column",
+    "syntax": "PRODUCT(<column>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "PRODUCTX",
+    "group": "Aggregation",
+    "description": "Returns the product of an expression evaluated for each row in a table",
+    "syntax": "PRODUCTX(<table>, <expression>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "QUARTER",
+    "group": "Date",
+    "description": "Returns the quarter as a number from 1 to 4",
+    "syntax": "QUARTER(<date>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "QUOTIENT",
+    "group": "Math",
+    "description": "Performs division and returns only the integer portion of the division result",
+    "syntax": "QUOTIENT(<numerator>, <denominator>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "RADIANS",
+    "group": "Math",
+    "description": "Converts degrees to radians",
+    "syntax": "RADIANS(<angle>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "RAND",
+    "group": "Math",
+    "description": "Returns a random number greater than or equal to 0 and less than 1",
+    "syntax": "RAND()",
+    "returns": "Decimal"
+  },
+  {
+    "name": "RANDBETWEEN",
+    "group": "Math",
+    "description": "Returns a random number in the range you specify",
+    "syntax": "RANDBETWEEN(<bottom>, <top>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "RANKX",
+    "group": "Statistical",
+    "description": "Returns the ranking of a number in a list of numbers for each row in the table argument",
+    "syntax": "RANKX(<table>, <expression>[, <value>[, <order>[, <ties>]]])",
+    "returns": "Decimal"
+  },
+  {
+    "name": "RELATED",
+    "group": "Relationship",
+    "description": "Returns a related value from another table",
+    "syntax": "RELATED(<column>)",
+    "returns": "Scalar"
+  },
+  {
+    "name": "RELATEDTABLE",
+    "group": "Relationship",
+    "description": "Returns all related rows from a specified table",
+    "syntax": "RELATEDTABLE(<table>)",
+    "returns": "Table"
+  },
+  {
+    "name": "REMOVEFILTERS",
+    "group": "Filter",
+    "description": "Clears filters from the specified tables or columns",
+    "syntax": "REMOVEFILTERS([<table> | <column>[, <column>[, ...]]])",
+    "returns": "Filter"
+  },
+  {
+    "name": "REPLACE",
+    "group": "Text",
+    "description": "Replaces part of a text string with a different text string",
+    "syntax": "REPLACE(<old_text>, <start_num>, <num_chars>, <new_text>)",
+    "returns": "String"
+  },
+  {
+    "name": "REPT",
+    "group": "Text",
+    "description": "Repeats text a given number of times",
+    "syntax": "REPT(<text>, <num_times>)",
+    "returns": "String"
+  },
+  {
+    "name": "RIGHT",
+    "group": "Text",
+    "description": "Returns the specified number of characters from the end of a text string",
+    "syntax": "RIGHT(<text>, <num_chars>)",
+    "returns": "String"
+  },
+  {
+    "name": "ROUND",
+    "group": "Math",
+    "description": "Rounds a number to the specified number of digits",
+    "syntax": "ROUND(<number>, <num_digits>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ROUNDDOWN",
+    "group": "Math",
+    "description": "Rounds a number down, toward zero",
+    "syntax": "ROUNDDOWN(<number>, <num_digits>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ROUNDUP",
+    "group": "Math",
+    "description": "Rounds a number up, away from zero",
+    "syntax": "ROUNDUP(<number>, <num_digits>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "ROW",
+    "group": "Table",
+    "description": "Returns a single row table with new columns specified by the expressions",
+    "syntax": "ROW(<n>, <expression>[, <n>, <expression>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "SAMEPERIODLASTYEAR",
+    "group": "Time Intelligence",
+    "description": "Returns a table with dates from the same period in the previous year",
+    "syntax": "SAMEPERIODLASTYEAR(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "SEARCH",
+    "group": "Text",
+    "description": "Returns the number of the character at which a specific character or text string is first found (case-insensitive)",
+    "syntax": "SEARCH(<find_text>, <within_text>[, <start_num>][, <NotFoundValue>])",
+    "returns": "Integer"
+  },
+  {
+    "name": "SECOND",
+    "group": "Date",
+    "description": "Returns the seconds of a time value as a number from 0 to 59",
+    "syntax": "SECOND(<datetime>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "SELECTCOLUMNS",
+    "group": "Table",
+    "description": "Adds calculated columns to a table and returns a table with only those columns",
+    "syntax": "SELECTCOLUMNS(<table>, <n>, <expression>[, <n>, <expression>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "SELECTEDVALUE",
+    "group": "Filter",
+    "description": "Returns the value when there's only one value in the specified column, otherwise returns the alternate result",
+    "syntax": "SELECTEDVALUE(<columnName>[, <alternateResult>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "SIGN",
+    "group": "Math",
+    "description": "Returns the sign of a number: 1 if positive, -1 if negative, 0 if zero",
+    "syntax": "SIGN(<number>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "SIN",
+    "group": "Math",
+    "description": "Returns the sine of the given angle",
+    "syntax": "SIN(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "SQRT",
+    "group": "Math",
+    "description": "Returns the square root of a number",
+    "syntax": "SQRT(<number>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "STARTOFMONTH",
+    "group": "Time Intelligence",
+    "description": "Returns the first date of the month in the current context",
+    "syntax": "STARTOFMONTH(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "STARTOFQUARTER",
+    "group": "Time Intelligence",
+    "description": "Returns the first date of the quarter in the current context",
+    "syntax": "STARTOFQUARTER(<dates>)",
+    "returns": "Table"
+  },
+  {
+    "name": "STARTOFYEAR",
+    "group": "Time Intelligence",
+    "description": "Returns the first date of the year in the current context",
+    "syntax": "STARTOFYEAR(<dates>[, <year_end_date>])",
+    "returns": "Table"
+  },
+  {
+    "name": "SUBSTITUTE",
+    "group": "Text",
+    "description": "Replaces existing text with new text in a text string",
+    "syntax": "SUBSTITUTE(<text>, <old_text>, <new_text>[, <instance_num>])",
+    "returns": "String"
+  },
+  {
+    "name": "SUM",
+    "group": "Aggregation",
+    "description": "Adds all the numbers in a column",
+    "syntax": "SUM(<column>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "SUMMARIZE",
+    "group": "Table",
+    "description": "Groups rows and creates summary rows based on specified columns",
+    "syntax": "SUMMARIZE(<table>, <groupBy_columnName>[, <groupBy_columnName>]...[, <n>, <expression>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "SUMMARIZECOLUMNS",
+    "group": "Table",
+    "description": "Creates a summary table based on specified columns and expressions",
+    "syntax": "SUMMARIZECOLUMNS(<groupBy_columnName>[, <groupBy_columnName>]...[, <filterTable>]...[, <n>, <expression>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "SUMX",
+    "group": "Aggregation",
+    "description": "Returns the sum of an expression evaluated for each row in a table",
+    "syntax": "SUMX(<table>, <expression>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "SWITCH",
+    "group": "Logical",
+    "description": "Evaluates an expression against a list of values and returns one of multiple possible result expressions",
+    "syntax": "SWITCH(<expression>, <value1>, <result1>[, <value2>, <result2>]...[, <else>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "TIME",
+    "group": "Date",
+    "description": "Converts hours, minutes, and seconds given as numbers to a time",
+    "syntax": "TIME(<hour>, <minute>, <second>)",
+    "returns": "DateTime"
+  },
+  {
+    "name": "TIMEVALUE",
+    "group": "Date",
+    "description": "Converts a time in text format to a time in datetime format",
+    "syntax": "TIMEVALUE(<time_text>)",
+    "returns": "DateTime"
+  },
+  {
+    "name": "TODAY",
+    "group": "Date",
+    "description": "Returns the current date",
+    "syntax": "TODAY()",
+    "returns": "DateTime"
+  },
+  {
+    "name": "TOPN",
+    "group": "Table",
+    "description": "Returns the top N rows of the specified table",
+    "syntax": "TOPN(<n_value>, <table>, <orderBy_expression>, <order>[, <orderBy_expression>, <order>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "TOTALMTD",
+    "group": "Time Intelligence",
+    "description": "Evaluates an expression for the dates in the month to date",
+    "syntax": "TOTALMTD(<expression>, <dates>[, <filter>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "TOTALQTD",
+    "group": "Time Intelligence",
+    "description": "Evaluates an expression for the dates in the quarter to date",
+    "syntax": "TOTALQTD(<expression>, <dates>[, <filter>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "TOTALYTD",
+    "group": "Time Intelligence",
+    "description": "Evaluates an expression for the dates in the year to date",
+    "syntax": "TOTALYTD(<expression>, <dates>[, <filter>][, <year_end_date>])",
+    "returns": "Scalar"
+  },
+  {
+    "name": "TREATAS",
+    "group": "Table",
+    "description": "Applies the result of a table expression as filters to columns from an unrelated table",
+    "syntax": "TREATAS(<table_expression>, <column>[, <column>[, ...]])",
+    "returns": "Table"
+  },
+  {
+    "name": "TRIM",
+    "group": "Text",
+    "description": "Removes all spaces from text except for single spaces between words",
+    "syntax": "TRIM(<text>)",
+    "returns": "String"
+  },
+  {
+    "name": "TRUE",
+    "group": "Logical",
+    "description": "Returns the logical value TRUE",
+    "syntax": "TRUE()",
+    "returns": "Boolean"
+  },
+  {
+    "name": "TRUNC",
+    "group": "Math",
+    "description": "Truncates a number to an integer by removing the decimal part",
+    "syntax": "TRUNC(<number>[, <num_digits>])",
+    "returns": "Integer"
+  },
+  {
+    "name": "UNION",
+    "group": "Table",
+    "description": "Returns the union of the tables whose columns match",
+    "syntax": "UNION(<table1>, <table2>[, <table>]...)",
+    "returns": "Table"
+  },
+  {
+    "name": "UPPER",
+    "group": "Text",
+    "description": "Converts a text string to all uppercase letters",
+    "syntax": "UPPER(<text>)",
+    "returns": "String"
+  },
+  {
+    "name": "USERELATIONSHIP",
+    "group": "Relationship",
+    "description": "Specifies an inactive relationship to be used in a CALCULATE expression",
+    "syntax": "USERELATIONSHIP(<columnName1>, <columnName2>)",
+    "returns": "Filter"
+  },
+  {
+    "name": "USERNAME",
+    "group": "Information",
+    "description": "Returns the domain name and username of the current connection",
+    "syntax": "USERNAME()",
+    "returns": "String"
+  },
+  {
+    "name": "USERPRINCIPALNAME",
+    "group": "Information",
+    "description": "Returns the user principal name of the current user",
+    "syntax": "USERPRINCIPALNAME()",
+    "returns": "String"
+  },
+  {
+    "name": "UTCNOW",
+    "group": "Date",
+    "description": "Returns the current UTC date and time",
+    "syntax": "UTCNOW()",
+    "returns": "DateTime"
+  },
+  {
+    "name": "UTCTODAY",
+    "group": "Date",
+    "description": "Returns the current UTC date",
+    "syntax": "UTCTODAY()",
+    "returns": "DateTime"
+  },
+  {
+    "name": "VALUE",
+    "group": "Text",
+    "description": "Converts a text string that represents a number to a number",
+    "syntax": "VALUE(<text>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "VALUES",
+    "group": "Filter",
+    "description": "Returns a one-column table with distinct values from the specified column",
+    "syntax": "VALUES(<column>)",
+    "returns": "Table"
+  },
+  {
+    "name": "VAR.P",
+    "group": "Statistical",
+    "description": "Returns the variance of the entire population",
+    "syntax": "VAR.P(<column>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "VAR.S",
+    "group": "Statistical",
+    "description": "Returns the variance of a sample population",
+    "syntax": "VAR.S(<column>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "VARX.P",
+    "group": "Statistical",
+    "description": "Returns the variance of the entire population based on the entire population",
+    "syntax": "VARX.P(<table>, <expression>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "VARX.S",
+    "group": "Statistical",
+    "description": "Returns the variance of a sample population",
+    "syntax": "VARX.S(<table>, <expression>)",
+    "returns": "Decimal"
+  },
+  {
+    "name": "WEEKDAY",
+    "group": "Date",
+    "description": "Returns a number from 1 to 7 identifying the day of the week",
+    "syntax": "WEEKDAY(<date>[, <return_type>])",
+    "returns": "Integer"
+  },
+  {
+    "name": "WEEKNUM",
+    "group": "Date",
+    "description": "Returns the week number in the year",
+    "syntax": "WEEKNUM(<date>[, <return_type>])",
+    "returns": "Integer"
+  },
+  {
+    "name": "YEAR",
+    "group": "Date",
+    "description": "Returns the year as a four-digit integer",
+    "syntax": "YEAR(<date>)",
+    "returns": "Integer"
+  },
+  {
+    "name": "YEARFRAC",
+    "group": "Date",
+    "description": "Calculates the fraction of the year represented by the number of whole days between two dates",
+    "syntax": "YEARFRAC(<start_date>, <end_date>[, <basis>])",
+    "returns": "Decimal"
+  }
+]

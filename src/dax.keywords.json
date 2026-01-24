@@ -1,0 +1,27 @@
+[
+  {
+    "name": "VAR",
+    "description": "Declares a variable that can be used in the expression",
+    "syntax": "VAR <name> = <expression>"
+  },
+  {
+    "name": "RETURN",
+    "description": "Defines the expression to return from a measure or calculated column",
+    "syntax": "RETURN <expression>"
+  },
+  {
+    "name": "EVALUATE",
+    "description": "Used in DAX queries to return a table expression",
+    "syntax": "EVALUATE <table>"
+  },
+  {
+    "name": "DEFINE",
+    "description": "Defines measures or columns in a DAX query",
+    "syntax": "DEFINE MEASURE <table>[<measure>] = <expression>"
+  },
+  {
+    "name": "ORDER BY",
+    "description": "Sorts the result of an EVALUATE statement",
+    "syntax": "ORDER BY <column> [ASC|DESC]"
+  }
+]

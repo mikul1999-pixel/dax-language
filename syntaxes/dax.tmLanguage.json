@@ -1,0 +1,181 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "DAX",
+  "scopeName": "source.dax",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#table-column-references"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.dax",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.line.double-dash.dax",
+          "match": "--.*$"
+        },
+        {
+          "name": "comment.block.dax",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.dax",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.dax",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.dax",
+          "match": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.dax",
+          "match": "\\b(VAR|RETURN|EVALUATE|DEFINE|ORDER BY)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.dax",
+          "match": "\\b(AND|OR|NOT|IN)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.dax",
+          "match": "\\b(TRUE|FALSE|BLANK)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.dax",
+          "match": "(==|=|<>|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.logical.dax",
+          "match": "(&&|\\|\\|)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.dax",
+          "match": "(\\+|-|\\*|/|\\^)"
+        },
+        {
+          "name": "keyword.operator.assignment.dax",
+          "match": ":="
+        },
+        {
+          "name": "keyword.operator.concatenation.dax",
+          "match": "&"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "support.function.math.dax",
+          "match": "\\b(ABS|ACOS|ACOSH|ACOT|ACOTH|ASIN|ASINH|ATAN|ATANH|CEILING|CURRENCY|DIVIDE|EXP|FACT|FLOOR|INT|ISEVEN|ISODD|LN|LOG|LOG10|MOD|POWER|QUOTIENT|RADIANS|RAND|RANDBETWEEN|ROUND|ROUNDDOWN|ROUNDUP|SIGN|SIN|SQRT|TRUNC)\\b"
+        },
+        {
+          "name": "support.function.table.dax",
+          "match": "\\b(ADDCOLUMNS|ADDMISSINGITEMS|CONTAINS|CONTAINSROW|CROSSJOIN|CURRENTGROUP|DISTINCT|EXCEPT|GENERATE|GENERATEALL|GENERATESERIES|GROUPBY|IGNORE|INTERSECT|NATURALINNERJOIN|NATURALLEFTOUTERJOIN|ROW|SELECTCOLUMNS|SUMMARIZE|SUMMARIZECOLUMNS|TOPN|TREATAS|UNION)\\b"
+        },
+        {
+          "name": "support.function.filter.dax",
+          "match": "\\b(ALL|ALLCROSSFILTERED|ALLEXCEPT|ALLNOBLANKROW|ALLSELECTED|CALCULATE|CALCULATETABLE|FILTER|FILTERS|HASONEFILTER|HASONEVALUE|KEEPFILTERS|LOOKUPVALUE|REMOVEFILTERS|SELECTEDVALUE|VALUES)\\b"
+        },
+        {
+          "name": "support.function.logical.dax",
+          "match": "\\b(AND|COALESCE|FALSE|IF|IFERROR|NOT|OR|SWITCH|TRUE)\\b"
+        },
+        {
+          "name": "support.function.aggregation.dax",
+          "match": "\\b(APPROXIMATEDISTINCTCOUNT|AVERAGE|AVERAGEA|AVERAGEX|COUNT|COUNTA|COUNTAX|COUNTBLANK|COUNTROWS|COUNTX|DISTINCTCOUNT|MAX|MAXA|MAXX|MIN|MINA|MINX|PRODUCT|PRODUCTX|SUM|SUMX)\\b"
+        },
+        {
+          "name": "support.function.other.dax",
+          "match": "\\b(BLANK|CUSTOMDATA|EARLIER|EARLIEST|ERROR)\\b"
+        },
+        {
+          "name": "support.function.date.dax",
+          "match": "\\b(CALENDAR|CALENDARAUTO|DATE|DATEDIFF|DATEVALUE|DAY|EDATE|EOMONTH|HOUR|MINUTE|MONTH|NOW|QUARTER|SECOND|TIME|TIMEVALUE|TODAY|UTCNOW|UTCTODAY|WEEKDAY|WEEKNUM|YEAR|YEARFRAC)\\b"
+        },
+        {
+          "name": "support.function.text.dax",
+          "match": "\\b(COMBINEVALUES|CONCATENATE|CONCATENATEX|CONTAINSSTRING|EXACT|FIND|FIXED|FORMAT|LEFT|LEN|LOWER|MID|REPLACE|REPT|RIGHT|SEARCH|SUBSTITUTE|TRIM|UPPER|VALUE)\\b"
+        },
+        {
+          "name": "support.function.relationship.dax",
+          "match": "\\b(CROSSFILTER|RELATED|RELATEDTABLE|USERELATIONSHIP)\\b"
+        },
+        {
+          "name": "support.function.time-intelligence.dax",
+          "match": "\\b(DATEADD|DATESBETWEEN|DATESINPERIOD|DATESMTD|DATESQTD|DATESYTD|ENDOFMONTH|ENDOFQUARTER|ENDOFYEAR|FIRSTDATE|FIRSTNONBLANK|FIRSTNONBLANKVALUE|LASTDATE|LASTNONBLANK|LASTNONBLANKVALUE|NEXTDAY|NEXTMONTH|NEXTQUARTER|NEXTYEAR|PARALLELPERIOD|PREVIOUSDAY|PREVIOUSMONTH|PREVIOUSQUARTER|PREVIOUSYEAR|SAMEPERIODLASTYEAR|STARTOFMONTH|STARTOFQUARTER|STARTOFYEAR|TOTALMTD|TOTALQTD|TOTALYTD)\\b"
+        },
+        {
+          "name": "support.function.information.dax",
+          "match": "\\b(ISBLANK|ISCROSSFILTERED|ISEMPTY|ISERROR|ISFILTERED|ISINSCOPE|ISLOGICAL|ISNONTEXT|ISNUMBER|ISTEXT|USERNAME|USERPRINCIPALNAME)\\b"
+        },
+        {
+          "name": "support.function.statistical.dax",
+          "match": "\\b(MEDIAN|MEDIANX|RANKX|VAR.P|VAR.S|VARX.P|VARX.S)\\b"
+        },
+        {
+          "name": "support.function.parent-child.dax",
+          "match": "\\b(PATH|PATHCONTAINS|PATHITEM|PATHITEMREVERSE|PATHLENGTH)\\b"
+        }
+      ]
+    },
+    "table-column-references": {
+      "patterns": [
+        {
+          "name": "variable.other.column.dax",
+          "match": "\\[[^\\]]+\\]"
+        }
+      ]
+    }
+  }
+}
