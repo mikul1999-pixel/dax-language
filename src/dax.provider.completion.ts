@@ -4,6 +4,8 @@ const daxFunctions = require('./dax.functions.json');
 const daxKeywords = require('./dax.keywords.json');
 
 export class DaxCompletionProvider implements vscode.CompletionItemProvider {
+  private currentDecoration?: vscode.TextEditorDecorationType;
+  private currentEditor?: vscode.TextEditor;
   
   provideCompletionItems(
     document: vscode.TextDocument,
@@ -29,10 +31,16 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       documentation.appendMarkdown(`**Returns:** ${fn.returns}\n\n`);
       documentation.appendMarkdown(`**Category:** ${fn.group}`);
       item.documentation = documentation;
+
+      // Add command to show parameter hint
+      item.command = {
+        command: 'dax.showParameterHint',
+        title: 'Show Parameter Hint',
+        arguments: [fn.syntax, fn.name]
+      };
       
-      // Create snippet for function with parameters
-      const snippet = this.createFunctionSnippet(fn.syntax, fn.name);
-      item.insertText = snippet;
+      // Add function completions
+      item.insertText = fn.name;
       
       // Sort order
       item.sortText = `1_${fn.name}`;
@@ -62,44 +70,147 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     
     return completionItems;
   }
-  
-  // Create snippet from function syntax
-  // Converts: "SUM(<column>)" --> "SUM(${1:column})"
-  private createFunctionSnippet(syntax: string, functionName: string): vscode.SnippetString {
-    // Extract everything after function name
-    const match = syntax.match(/\((.*)\)/);
-    
-    if (!match) {
-      // No parameters, just add empty parens
-      return new vscode.SnippetString(`${functionName}($0)`);
+
+  // Hint about parameter placeholder snippet
+  public async showParameterHint(syntax: string, functionName: string) {
+    // Check if parameter hints are enabled
+    const config = vscode.workspace.getConfiguration('dax');
+    if (!config.get<boolean>('showParameterHints', true)) {
+      return;
     }
+    console.log('showParameterHint called');
     
-    const params = match[1];
-    
-    // Split by commas
-    const paramList = this.splitParameters(params);
-    
-    // Create placeholders for each parameter
-    let snippetString = `${functionName}(`;
-    paramList.forEach((param, index) => {
-      // Clean up parameter (remove < >)
-      const cleanParam = param
-        .replace(/^<|>$/g, '')
-        .replace(/^\[|\]$/g, '')
-        .trim();
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) return;
+
+    // Dispose previous decoration if exists
+    if (this.currentDecoration) {
+      this.currentDecoration.dispose();
+    }
+
+    // Store the editor
+    this.currentEditor = editor;
+
+    const position = editor.selection.active;
+    this.currentDecoration = vscode.window.createTextEditorDecorationType({
+      after: {
+        contentText: ` ${syntax.replace(functionName, '').trim()} - Press Shift+Enter to insert`,
+        color: new vscode.ThemeColor('editorCodeLens.foreground'),
+        fontStyle: 'italic'
+      }
+    });
+
+    const range = new vscode.Range(position, position);
+    editor.setDecorations(this.currentDecoration, [{ range }]);
+
+    // Auto-clear after 5 seconds
+    setTimeout(() => {
+      if (this.currentDecoration) {
+        this.currentDecoration.dispose();
+        this.currentDecoration = undefined;
+        this.currentEditor = undefined;
+      }
+    }, 5000);
+  }
+
+  // Create snippet from function syntax
+  private createFunctionSnippet(syntax: string, functionName: string): vscode.SnippetString {
+    try {
+      // Extract parameters from syntax: "SUM(<column>)" -> "<column>"
+      const match = syntax.match(/\((.*)\)/);
       
-      if (index > 0) {
-        snippetString += ', ';
+      if (!match || !match[1]) {
+        // No parameters found, return function with empty parens
+        return new vscode.SnippetString(`${functionName}($0)`);
       }
       
-      // Add as a placeholder
-      snippetString += `\${${index + 1}:${cleanParam}}`;
-    });
-    snippetString += ')$0';
-    
-    return new vscode.SnippetString(snippetString);
+      const paramsString = match[1];
+      const paramList = this.splitParameters(paramsString);
+      
+      if (paramList.length === 0) {
+        // Empty parameter list
+        return new vscode.SnippetString(`${functionName}($0)`);
+      }
+      
+      // Build snippet with parameter placeholders
+      let snippetString = `${functionName}(`;
+      
+      paramList.forEach((param, index) => {
+        // Clean up parameter: remove < >, [ ], and whitespace
+        let cleanParam = param.trim();
+        cleanParam = cleanParam.replace(/^<(.+)>$/, '$1');
+        cleanParam = cleanParam.replace(/^\[<(.+)>\]$/, '$1');
+        cleanParam = cleanParam.replace(/^\[(.+)\]$/, '$1');
+        
+        // Add comma separator for subsequent parameters
+        if (index > 0) {
+          snippetString += ', ';
+        }
+        
+        // Create tabstop: ${1:paramName}
+        snippetString += `\${${index + 1}:${cleanParam}}`;
+      });
+      
+      // Add final tabstop after closing paren
+      snippetString += ')$0';
+      
+      return new vscode.SnippetString(snippetString);
+      
+    } catch (error) {
+      // Fallback to simple snippet
+      console.error('Error creating function snippet:', error);
+      return new vscode.SnippetString(`${functionName}($0)`);
+    }
   }
-  
+
+  // Insert parameter snippet
+  public async expandParameters() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      return;
+    }
+
+    try {
+      const document = editor.document;
+      const position = editor.selection.active;
+
+      // Get the word before the cursor
+      const wordRange = document.getWordRangeAtPosition(position);
+      if (!wordRange) {
+        vscode.window.showInformationMessage('No function name found at cursor position');
+        return;
+      }
+
+      const functionName = document.getText(wordRange).toUpperCase();
+
+      // Look up the function
+      const fn = daxFunctions.find(
+        (f: any) => f.name.toUpperCase() === functionName
+      );
+      
+      if (!fn) {
+        vscode.window.showInformationMessage(`Function '${functionName}' not found`);
+        return;
+      }
+
+      // Build snippet
+      const snippet = this.createFunctionSnippet(fn.syntax, fn.name);
+
+      // Replace the function name with the snippet
+      await editor.insertSnippet(snippet, wordRange);
+
+      // Clear the decoration
+      if (this.currentDecoration && this.currentEditor) {
+        this.currentEditor.setDecorations(this.currentDecoration, []);
+        this.currentDecoration.dispose();
+        this.currentDecoration = undefined;
+        this.currentEditor = undefined;
+      }
+    } catch (error) {
+      vscode.window.showErrorMessage(`Error expanding parameters: ${error}`);
+    }
+  }
+
   // Split parameters by comma, keep nested brackets
   private splitParameters(params: string): string[] {
     const result: string[] = [];

@@ -15,6 +15,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "DAX",
+      "properties": {
+        "dax.showParameterHints": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline parameter hints after completing a function"
+        }
+      }
+    },
     "languages": [
       {
         "id": "dax",
@@ -33,6 +43,13 @@
         "language": "dax",
         "scopeName": "source.dax",
         "path": "./syntaxes/dax.tmLanguage.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "dax.expandParameters",
+        "key": "shift+enter",
+        "when": "editorTextFocus && editorLangId == dax"
       }
     ]
   },
