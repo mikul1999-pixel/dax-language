@@ -1,27 +1,102 @@
 [
   {
     "name": "VAR",
-    "description": "Declares a variable that can be used in the expression",
+    "description": "Declares a named variable to store the result of an expression.",
     "syntax": "VAR <name> = <expression>"
   },
   {
     "name": "RETURN",
-    "description": "Defines the expression to return from a measure or calculated column",
+    "description": "Output the result of a variable block.",
     "syntax": "RETURN <expression>"
   },
   {
     "name": "EVALUATE",
-    "description": "Used in DAX queries to return a table expression",
+    "description": "Executes a DAX query and returns a table.",
     "syntax": "EVALUATE <table>"
   },
   {
     "name": "DEFINE",
-    "description": "Defines measures or columns in a DAX query",
-    "syntax": "DEFINE MEASURE <table>[<measure>] = <expression>"
+    "description": "Introduces a query definition block for local measures, columns, or tables.",
+    "syntax": "DEFINE MEASURE... | VAR..."
+  },
+  {
+    "name": "MEASURE",
+    "description": "Defines a measure within a query scope (used inside DEFINE).",
+    "syntax": "MEASURE <table>[<name>] = <expression>"
+  },
+  {
+    "name": "COLUMN",
+    "description": "Defines a calculated column within a query scope (used inside DEFINE).",
+    "syntax": "COLUMN <table>[<name>] = <expression>"
+  },
+  {
+    "name": "TABLE",
+    "description": "Defines a calculated table within a query scope (used inside DEFINE).",
+    "syntax": "TABLE <name> = <expression>"
   },
   {
     "name": "ORDER BY",
-    "description": "Sorts the result of an EVALUATE statement",
+    "description": "Sorts the result of an EVALUATE statement or Window function.",
     "syntax": "ORDER BY <column> [ASC|DESC]"
+  },
+  {
+    "name": "START AT",
+    "description": "Specifies the starting values for an ORDER BY clause in a query.",
+    "syntax": "ORDER BY ... START AT <value>, ..."
+  },
+  {
+    "name": "PARTITION BY",
+    "description": "Divides the table into partitions for window functions.",
+    "syntax": "PARTITION BY <column>"
+  },
+  {
+    "name": "MATCHBY",
+    "description": "Defines the columns used to match data in window functions.",
+    "syntax": "MATCHBY <column>"
+  },
+  {
+    "name": "ASC",
+    "description": "Sorts the column in ascending order.",
+    "syntax": "ORDER BY <column> ASC"
+  },
+  {
+    "name": "DESC",
+    "description": "Sorts the column in descending order.",
+    "syntax": "ORDER BY <column> DESC"
+  },
+  {
+    "name": "IN",
+    "description": "Logical operator to check if a value exists in a list or column.",
+    "syntax": "<expr> IN { \"A\", \"B\" }"
+  },
+  {
+    "name": "STRING",
+    "description": "Data type definition for DATATABLE.",
+    "syntax": "DATATABLE ( \"Name\", STRING, ... )"
+  },
+  {
+    "name": "INTEGER",
+    "description": "Data type definition for DATATABLE.",
+    "syntax": "DATATABLE ( \"Name\", INTEGER, ... )"
+  },
+  {
+    "name": "DOUBLE",
+    "description": "Data type definition for DATATABLE.",
+    "syntax": "DATATABLE ( \"Name\", DOUBLE, ... )"
+  },
+  {
+    "name": "DATETIME",
+    "description": "Data type definition for DATATABLE.",
+    "syntax": "DATATABLE ( \"Name\", DATETIME, ... )"
+  },
+  {
+    "name": "CURRENCY",
+    "description": "Data type definition for DATATABLE.",
+    "syntax": "DATATABLE ( \"Name\", CURRENCY, ... )"
+  },
+  {
+    "name": "BOOLEAN",
+    "description": "Data type definition for DATATABLE.",
+    "syntax": "DATATABLE ( \"Name\", BOOLEAN, ... )"
   }
 ]

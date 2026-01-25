@@ -14,12 +14,6 @@
     "Programming Languages"
   ],
   "main": "./out/extension.js",
-  "files": [
-    "out",
-    "syntaxes",
-    "language-configuration.json",
-    "package.json"
-  ],
   "contributes": {
     "languages": [
       {

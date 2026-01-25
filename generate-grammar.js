@@ -1,11 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
-// Load DAX functions
+// Load DAX functions and keywords
 const daxFunctions = require('./src/dax.functions.json');
 const daxKeywords = require('./src/dax.keywords.json');
 
-// Group functions by category
+// Sort by length
+const sortByLength = (arr) => arr.sort((a, b) => b.length - a.length);
+
+// Escape Regex Special Characters
+const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Functions
 const functionsByGroup = daxFunctions.reduce((acc, fn) => {
   const group = fn.group || 'Other';
   if (!acc[group]) acc[group] = [];
@@ -13,14 +19,28 @@ const functionsByGroup = daxFunctions.reduce((acc, fn) => {
   return acc;
 }, {});
 
-// Create grammar patterns for each group
+// Require "(" after function name
 const functionPatterns = Object.entries(functionsByGroup).map(([group, names]) => ({
-  name: "support.function." + group.toLowerCase().replace(/\s+/g, '-') + ".dax",
-  match: "\\b(" + names.join('|') + ")\\b"
+  name: `support.function.${group.toLowerCase().replace(/\s+/g, '-')}.dax`,
+  match: `(?i)\\b(${sortByLength(names).map(escapeRegex).join('|')})\\s*(?=\\()`
 }));
 
+// Constant-like functions (TRUE/FALSE/BLANK)
+const constantFunctionPattern = {
+  name: "support.function.constant.dax",
+  match: "(?i)\\b(TRUE|FALSE|BLANK)\\s*(?=\\()"
+};
+
 // Keywords
-const keywords = daxKeywords.map(k => k.name);
+const typeKeywordsList = ['STRING', 'INTEGER', 'DOUBLE', 'DATETIME', 'CURRENCY', 'BOOLEAN', 'TABLE', 'COLUMN'];
+const wordOperatorsList = ['IN'];
+const rawKeywords = daxKeywords.map(k => k.name.replace(/ /g, '\\s+'));
+
+const typeKeywords = rawKeywords.filter(k => typeKeywordsList.includes(k.toUpperCase()));
+const controlKeywords = rawKeywords.filter(k =>
+  !typeKeywordsList.includes(k.toUpperCase()) &&
+  !wordOperatorsList.includes(k.toUpperCase())
+);
 
 // Build the grammar
 const grammar = {
@@ -32,9 +52,8 @@ const grammar = {
     { "include": "#strings" },
     { "include": "#numbers" },
     { "include": "#keywords" },
-    { "include": "#functions" },
     { "include": "#operators" },
-    { "include": "#constants" },
+    { "include": "#functions" },
     { "include": "#table-column-references" }
   ],
   "repository": {
@@ -64,7 +83,7 @@ const grammar = {
           "patterns": [
             {
               "name": "constant.character.escape.dax",
-              "match": "\\\\."
+              "match": "\"\""
             }
           ]
         }
@@ -82,27 +101,27 @@ const grammar = {
       "patterns": [
         {
           "name": "keyword.control.dax",
-          "match": "\\b(" + keywords.join('|') + ")\\b"
+          "match": `(?i)\\b(${sortByLength(controlKeywords).join('|')})\\b`
         },
         {
-          "name": "keyword.operator.logical.dax",
-          "match": "\\b(AND|OR|NOT|IN)\\b"
-        }
-      ]
-    },
-    "constants": {
-      "patterns": [
-        {
-          "name": "constant.language.dax",
-          "match": "\\b(TRUE|FALSE|BLANK)\\b"
+          "name": "storage.type.dax",
+          "match": `(?i)\\b(${sortByLength(typeKeywords).join('|')})\\b`
         }
       ]
     },
     "operators": {
       "patterns": [
         {
+          "name": "keyword.control.operator.word.dax",
+          "match": `(?i)\\b(${sortByLength(wordOperatorsList).join('|')})\\b`
+        },
+        { 
+          "name": "keyword.control.operator.word.dax", 
+          "match": "(?i)\\bNOT\\b(?!\\s*\\()" 
+        },
+        {
           "name": "keyword.operator.comparison.dax",
-          "match": "(==|=|<>|!=|<=|>=|<|>)"
+          "match": "(==|<>|!=|<=|>=|=|<|>)"
         },
         {
           "name": "keyword.operator.logical.dax",
@@ -123,14 +142,13 @@ const grammar = {
       ]
     },
     "functions": {
-      "patterns": functionPatterns
+      "patterns": [
+        constantFunctionPattern,
+        ...functionPatterns
+      ]
     },
     "table-column-references": {
       "patterns": [
-        {
-          "name": "variable.other.table.dax",
-          "match": "'[^']+'"
-        },
         {
           "name": "variable.other.column.dax",
           "match": "\\[[^\\]]+\\]"
@@ -146,5 +164,5 @@ fs.writeFileSync(grammarPath, JSON.stringify(grammar, null, 2));
 
 console.log('Grammar generated:');
 console.log('   Functions: ' + daxFunctions.length);
-console.log('   Keywords: ' + keywords.length);
-console.log('   Groups: ' + Object.keys(functionsByGroup).length);
+console.log('   Control Keywords: ' + controlKeywords.length);
+console.log('   Type Keywords: ' + typeKeywords.length);
