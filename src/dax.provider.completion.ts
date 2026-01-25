@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 const daxFunctions = require('./dax.functions.json');
 const daxKeywords = require('./dax.keywords.json');
+const daxSnippets = require('./dax.snippets.json');
 
 export class DaxCompletionProvider implements vscode.CompletionItemProvider {
   private currentDecoration?: vscode.TextEditorDecorationType;
@@ -14,7 +15,48 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     context: vscode.CompletionContext
   ): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList> {
     
+    const linePrefix = document.lineAt(position).text.substring(0, position.character);
+    const isDaxSnippetTrigger = linePrefix.toLowerCase().includes('dax:');
     const completionItems: vscode.CompletionItem[] = [];
+    
+    // Only show snippets if "dax:" was typed
+    if (isDaxSnippetTrigger) {
+      Object.entries(daxSnippets).forEach(([name, snippet]: [string, any]) => {
+        const item = new vscode.CompletionItem(snippet.prefix, vscode.CompletionItemKind.Snippet);
+        item.detail = snippet.class;
+        item.insertText = new vscode.SnippetString(snippet.body.join('\n'));
+        
+        // Create documentation with code preview
+        const documentation = new vscode.MarkdownString();
+        documentation.appendMarkdown(`**${name}**\n\n`);
+        documentation.appendMarkdown(`${snippet.description}\n\n`);
+        documentation.appendMarkdown(`**Snippet:**\n`);
+        
+        // Show first N lines of the snippet
+        const previewLines = 6;
+        const bodyPreview = snippet.body.slice(0, previewLines);
+        const hasMore = snippet.body.length > previewLines;
+        
+        documentation.appendCodeblock(
+          bodyPreview.join('\n') + (hasMore ? '\n...' : ''),
+          'dax'
+        );
+        
+        item.documentation = documentation;
+        item.sortText = `0_${snippet.prefix}`;
+        
+        // Filter the "dax:" prefix from insertion
+        item.filterText = snippet.prefix;
+        item.range = new vscode.Range(
+          position.translate(0, -4),
+          position
+        );
+        
+        completionItems.push(item);
+      });
+      
+      return completionItems;
+    }
     
     // Add function completions
     daxFunctions.forEach((fn: any) => {

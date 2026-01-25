@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
     { scheme: 'file', language: 'dax' },
     completionClass,
     // Trigger characters
-    '(', ',', ' '
+    '(', ',', ' ', ':'
   );
   
   // Register hover provider

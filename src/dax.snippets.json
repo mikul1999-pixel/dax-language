@@ -1,0 +1,430 @@
+{
+  "Var block": {
+    "prefix": "dax:var",
+    "description": "Define a single variable and return a result.",
+    "class": "STRUCTURE",
+    "body": [
+      "VAR ${1:variable} = ${2:expression}",
+      "RETURN",
+      "    ${3:result}"
+    ]
+  },
+
+  "Multiple var block": {
+    "prefix": "dax:vars",
+    "description": "Define multiple variables and return a result.",
+    "class": "STRUCTURE",
+    "body": [
+      "VAR ${1:variable1} = ${2:expression1}",
+      "VAR ${3:variable2} = ${4:expression2}",
+      "RETURN",
+      "    ${5:result}"
+    ]
+  },
+
+  "Var block (indented)": {
+    "prefix": "dax:vars:indent",
+    "description": "Define variables with indented expressions.",
+    "class": "STRUCTURE",
+    "body": [
+      "VAR ${1:variable1} =",
+      "    ${2:expression1}",
+      "VAR ${3:variable2} =",
+      "    ${4:expression2}",
+      "RETURN",
+      "    ${5:result}"
+    ]
+  },
+
+  "Inline var": {
+    "prefix": "dax:var:inline",
+    "description": "Define a variable and return an inline expression.",
+    "class": "STRUCTURE",
+    "body": [
+      "VAR ${1:variable} = ${2:expression}",
+      "RETURN ${3:result}"
+    ]
+  },
+
+  "Yoy change": {
+    "prefix": "dax:yoy",
+    "description": "Compare a measure to its value one year earlier.",
+    "class": "TIME INTELLIGENCE",
+    "body": [
+      "VAR CurrentValue = ${1:[Base Measure]}",
+      "VAR PreviousYearValue = CALCULATE(",
+      "    ${1:[Base Measure]},",
+      "    SAMEPERIODLASTYEAR(${2:'Date'[Date]})",
+      ")",
+      "RETURN",
+      "    DIVIDE(CurrentValue - PreviousYearValue, PreviousYearValue, 0)"
+    ]
+  },
+
+  "Mom change": {
+    "prefix": "dax:mom",
+    "description": "Compare a measure to its value one month earlier.",
+    "class": "TIME INTELLIGENCE",
+    "body": [
+      "VAR CurrentValue = ${1:[Base Measure]}",
+      "VAR PreviousMonthValue = CALCULATE(",
+      "    ${1:[Base Measure]},",
+      "    DATEADD(${2:'Date'[Date]}, -1, MONTH)",
+      ")",
+      "RETURN",
+      "    DIVIDE(CurrentValue - PreviousMonthValue, PreviousMonthValue, 0)"
+    ]
+  },
+
+  "Qoq change": {
+    "prefix": "dax:qoq",
+    "description": "Compare a measure to its value one quarter earlier.",
+    "class": "TIME INTELLIGENCE",
+    "body": [
+      "VAR CurrentValue = ${1:[Base Measure]}",
+      "VAR PreviousQuarterValue = CALCULATE(",
+      "    ${1:[Base Measure]},",
+      "    DATEADD(${2:'Date'[Date]}, -1, QUARTER)",
+      ")",
+      "RETURN",
+      "    DIVIDE(CurrentValue - PreviousQuarterValue, PreviousQuarterValue, 0)"
+    ]
+  },
+
+  "Year to date": {
+    "prefix": "dax:ytd",
+    "description": "Calculate a measure from the start of the year to the current date.",
+    "class": "TIME INTELLIGENCE",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Base Measure]},",
+      "    DATESYTD(${2:'Date'[Date]})",
+      ")"
+    ]
+  },
+
+  "Quarter to date": {
+    "prefix": "dax:qtd",
+    "description": "Calculate a measure from the start of the quarter to the current date.",
+    "class": "TIME INTELLIGENCE",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Base Measure]},",
+      "    DATESQTD(${2:'Date'[Date]})",
+      ")"
+    ]
+  },
+
+  "Month to date": {
+    "prefix": "dax:mtd",
+    "description": "Calculate a measure from the start of the month to the current date.",
+    "class": "TIME INTELLIGENCE",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Base Measure]},",
+      "    DATESMTD(${2:'Date'[Date]})",
+      ")"
+    ]
+  },
+
+  "Rolling 12 months": {
+    "prefix": "dax:r12",
+    "description": "Calculate a rolling 12‑month measure.",
+    "class": "TIME INTELLIGENCE",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Base Measure]},",
+      "    DATESINPERIOD(${2:'Date'[Date]}, MAX(${2:'Date'[Date]}), -12, MONTH)",
+      ")"
+    ]
+  },
+
+  "Growth rate": {
+    "prefix": "dax:growth",
+    "description": "Calculate the change between two measures.",
+    "class": "RATIOS & CHANGE",
+    "body": [
+      "VAR CurrentValue = ${1:[Measure]}",
+      "VAR PreviousValue = ${2:[Previous Measure]}",
+      "RETURN",
+      "    DIVIDE(CurrentValue - PreviousValue, PreviousValue, 0)"
+    ]
+  },
+
+  "Contribution ratio": {
+    "prefix": "dax:contribution",
+    "description": "Calculate a measure as a share of the total.",
+    "class": "RATIOS & CHANGE",
+    "body": [
+      "DIVIDE(",
+      "    ${1:[Measure]},",
+      "    CALCULATE(",
+      "        ${1:[Measure]},",
+      "        ${2|ALL,ALLSELECTED|}(${3:'Table'[Column]})",
+      "    ),",
+      "    0",
+      ")"
+    ]
+  },
+
+  "Calculate + filter": {
+    "prefix": "dax:calcfilter",
+    "description": "Apply a row‑level filter inside CALCULATE.",
+    "class": "CONTEXT",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Measure]},",
+      "    FILTER(",
+      "        ${2:'Table'},",
+      "        ${3:condition}",
+      "    )",
+      ")"
+    ]
+  },
+
+  "Calculate + all": {
+    "prefix": "dax:calcall",
+    "description": "Remove filters using ALL or ALLSELECTED inside CALCULATE.",
+    "class": "CONTEXT",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Measure]},",
+      "    ${2|ALL,ALLSELECTED|}(${3:'Table'[Column]})",
+      ")"
+    ]
+  },
+
+  "Calculate + removefilters": {
+    "prefix": "dax:calc:removefilters",
+    "description": "Clear filters using REMOVEFILTERS inside CALCULATE.",
+    "class": "CONTEXT",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Measure]},",
+      "    REMOVEFILTERS(${2:'Table'[Column]})",
+      ")"
+    ]
+  },
+
+  "Calculate + keepfilters": {
+    "prefix": "dax:calc:keepfilters",
+    "description": "Apply a filter without overriding existing filters.",
+    "class": "CONTEXT",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Measure]},",
+      "    KEEPFILTERS(${2:condition})",
+      ")"
+    ]
+  },
+
+  "Calculate + multiple filters": {
+    "prefix": "dax:calc:multi",
+    "description": "Apply multiple filters inside CALCULATE.",
+    "class": "CONTEXT",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Measure]},",
+      "    ${2:Filter1},",
+      "    ${3:Filter2}",
+      ")"
+    ]
+  },
+
+  "Crossfilter modifier": {
+    "prefix": "dax:crossfilter",
+    "description": "Modify relationship direction inside CALCULATE.",
+    "class": "CONTEXT",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Measure]},",
+      "    CROSSFILTER(${2:'Table1'[Key]}, ${3:'Table2'[Key]}, ${4|BOTH,NONE,ONEWAY|})",
+      ")"
+    ]
+  },
+
+  "Sumx basic": {
+    "prefix": "dax:sumx",
+    "description": "Iterate over a table and compute a row expression.",
+    "class": "TABLE SHAPING",
+    "body": [
+      "SUMX(",
+      "    ${1:'Table'},",
+      "    ${2:expression}",
+      ")"
+    ]
+  },
+
+  "Sumx + addcolumns": {
+    "prefix": "dax:sumx:addcolumns",
+    "description": "Iterate over a table extended with ADDCOLUMNS.",
+    "class": "TABLE SHAPING",
+    "body": [
+      "SUMX(",
+      "    ADDCOLUMNS(",
+      "        ${1:'Table'},",
+      "        \"${2:NewColumn}\", ${3:expression}",
+      "    ),",
+      "    ${4:result_expression}",
+      ")"
+    ]
+  },
+
+  "Addcolumns basic": {
+    "prefix": "dax:addcolumns",
+    "description": "Add calculated columns to a table.",
+    "class": "TABLE SHAPING",
+    "body": [
+      "ADDCOLUMNS(",
+      "    ${1:Table},",
+      "    \"${2:NewColumn}\", ${3:expression}",
+      ")"
+    ]
+  },
+
+  "Filter table": {
+    "prefix": "dax:filter",
+    "description": "Return rows that meet a condition.",
+    "class": "TABLE SHAPING",
+    "body": [
+      "FILTER(",
+      "    ${1:Table},",
+      "    ${2:condition}",
+      ")"
+    ]
+  },
+
+  "Topn selector": {
+    "prefix": "dax:topn",
+    "description": "Return the top N rows of a table.",
+    "class": "TABLE SHAPING",
+    "body": [
+      "TOPN(",
+      "    ${1:N},",
+      "    ${2:Table},",
+      "    ${3:OrderBy},",
+      "    ${4|ASC,DESC|}",
+      ")"
+    ]
+  },
+
+  "Summarize table": {
+    "prefix": "dax:summarize",
+    "description": "Group a table and add calculated columns.",
+    "class": "TABLE SHAPING",
+    "body": [
+      "SUMMARIZE(",
+      "    ${1:Table},",
+      "    ${2:GroupByColumn1},",
+      "    ${3:GroupByColumn2},",
+      "    \"${4:NewColumn}\", ${5:expression}",
+      ")"
+    ]
+  },
+
+  "If with blank": {
+    "prefix": "dax:if",
+    "description": "Return a value when a condition is true, otherwise blank.",
+    "class": "LOGIC",
+    "body": [
+      "IF(",
+      "    ${1:condition},",
+      "    ${2:true_result},",
+      "    ${3:BLANK()}",
+      ")"
+    ]
+  },
+
+  "Switch basic": {
+    "prefix": "dax:switch",
+    "description": "Return a result based on matching values.",
+    "class": "LOGIC",
+    "body": [
+      "SWITCH(",
+      "    ${1:expression},",
+      "    ${2:value1}, ${3:result1},",
+      "    ${4:value2}, ${5:result2},",
+      "    ${6:default_result}",
+      ")"
+    ]
+  },
+
+  "Switch true pattern": {
+    "prefix": "dax:switch:true",
+    "description": "Return a result based on matching conditions.",
+    "class": "LOGIC",
+    "body": [
+      "SWITCH(",
+      "    TRUE(),",
+      "    ${1:condition1}, ${2:result1},",
+      "    ${3:condition2}, ${4:result2},",
+      "    ${5:default_result}",
+      ")"
+    ]
+  },
+
+  "Coalesce fallback": {
+    "prefix": "dax:coalesce",
+    "description": "Return the first non‑blank expression.",
+    "class": "LOGIC",
+    "body": [
+      "COALESCE(",
+      "    ${1:expression},",
+      "    ${2:default}",
+      ")"
+    ]
+  },
+
+  "Divide safe": {
+    "prefix": "dax:divide",
+    "description": "Divide two expressions with a safe default.",
+    "class": "LOGIC",
+    "body": [
+      "DIVIDE(",
+      "    ${1:numerator},",
+      "    ${2:denominator},",
+      "    0",
+      ")"
+    ]
+  },
+
+  "Related lookup": {
+    "prefix": "dax:related",
+    "description": "Retrieve a related column value.",
+    "class": "MODEL NAVIGATION",
+    "body": [
+      "RELATED(${1:'Table'[Column]})"
+    ]
+  },
+
+  "Relatedtable lookup": {
+    "prefix": "dax:relatedtable",
+    "description": "Retrieve related rows from another table.",
+    "class": "MODEL NAVIGATION",
+    "body": [
+      "RELATEDTABLE(${1:'Table'})"
+    ]
+  },
+
+  "Format value": {
+    "prefix": "dax:format",
+    "description": "Format a value as text.",
+    "class": "UTILITY",
+    "body": [
+      "FORMAT(${1:value}, \"${2:format_string}\")"
+    ]
+  },
+
+  "Isblank guard": {
+    "prefix": "dax:isblank",
+    "description": "Return zero when an expression is blank.",
+    "class": "UTILITY",
+    "body": [
+      "IF(",
+      "    ISBLANK(${1:expression}),",
+      "    0,",
+      "    ${1:expression}",
+      ")"
+    ]
+  }
+}
