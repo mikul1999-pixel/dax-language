@@ -1,6 +1,6 @@
 # DAX Language Support
 
-**_*my personal version_**
+_***my personal version**_
 
 vscode extension for DAX (Data Analysis Expressions) for Power BI with syntax highlighting, autocomplete, hover documentation, and pattern snippets. 
 
@@ -16,10 +16,10 @@ Supports ```.dax``` file types
 
 ## Usage
 - Autocomplete functions and keywords while typing
-- Press ```Shift+Enter``` after function autocomplete to insert parameters
+- Press ```Shift+Enter``` after completing a function to insert parameters
 - Type ```dax:``` to browse code snippets. Refer to ```src/dax.snippets.json``` in the repo for list of specialized patterns
 
-In the extension settings, you can toggle Inline Parameter Hints
+In the extension settings, you can toggle "Show inline parameter hints"
 
 ## Fair Warning
 _This is a personal project. Features and functionality may change._
