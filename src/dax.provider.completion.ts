@@ -18,13 +18,47 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     const linePrefix = document.lineAt(position).text.substring(0, position.character);
     const isDaxSnippetTrigger = linePrefix.toLowerCase().includes('dax:');
     const completionItems: vscode.CompletionItem[] = [];
+
+    // parse tricky snippet options once. only through SnippetString, not json-->TS + SnippetString
+    const SNIPPET_OPTIONS_MAP: Record<string, string[]> = {
+        "fmt:number:options": [
+          '#,##0','#,##0.0','#,##0.00','#,##0,.0K','#,##0,,.0M','#,##0,,,.0B',
+          '+#,##0;-#,##0','+#,##0.0;-#,##0.0','+#,##0.00;-#,##0.00','+#,##0,.0K;-#,##0,.0K','+#,##0,,.0M;-#,##0,,.0M','+#,##0,,,.0B;-#,##0,,,.0B'
+        ],
+        "fmt:currency:options": [
+          '$#,##0','$#,##0.0','$#,##0.00','$#,##0,.0K','$#,##0,,.0M','$#,##0,,,.0B',
+          '+$#,##0;-$#,##0','+$#,##0.0;-$#,##0.0','+$#,##0.00;-$#,##0.00','+$#,##0,.0K;-$#,##0,.0K','+$#,##0,,.0M;-$#,##0,,.0M','+$#,##0,,,.0B;-$#,##0,,,.0B'
+        ],
+        "fmt:percent:options": ['0%','0.0%','0.00%','+0%;-0%','+0.0%;-0.0%','+0.00%;-0.00%'],
+        "fmt:bps:options": ['0 bps','0.0 bps','+0 bps;-0 bps','+0.0 bps;-0.0 bps'],
+        "fmt:date:options": ["mmm'yy",'yyyy-mm-dd','dd mmm yyyy','mmmm yyyy','mm/dd/yyyy','dd/mm/yyyy','dddd, mmmm dd, yyyy'],
+    };
     
     // Only show snippets if "dax:" was typed
     if (isDaxSnippetTrigger) {
       Object.entries(daxSnippets).forEach(([name, snippet]: [string, any]) => {
         const item = new vscode.CompletionItem(snippet.prefix, vscode.CompletionItemKind.Snippet);
+        let bodyString = snippet.body.join('\n');
+
+        // replace placeholders
+        for (const [key, options] of Object.entries(SNIPPET_OPTIONS_MAP)) {
+            const placeholder = `{{${key}}}`;
+            
+            if (bodyString.includes(placeholder)) {
+                const escapedOptions = options
+                    .map(opt => opt
+                        .replace(/\$/g, '\$')    // Escape $
+                        .replace(/,/g, '\\,')    // Escape , 
+                        .replace(/"/g, '\\"')    // Escape "
+                    )
+                    .join(',');
+
+                bodyString = bodyString.replace(placeholder, escapedOptions);
+                break;
+            }
+        }
         item.detail = snippet.class;
-        item.insertText = new vscode.SnippetString(snippet.body.join('\n'));
+        item.insertText = new vscode.SnippetString(bodyString);
         
         // Create documentation with code preview
         const documentation = new vscode.MarkdownString();
@@ -46,9 +80,11 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
         item.sortText = `0_${snippet.prefix}`;
         
         // Filter the "dax:" prefix from insertion
-        item.filterText = snippet.prefix;
+        const lineText = document.lineAt(position).text;
+        const triggerIdx = lineText.toLowerCase().lastIndexOf('dax:', position.character);
+
         item.range = new vscode.Range(
-          position.translate(0, -4),
+          position.with(undefined, triggerIdx),
           position
         );
         

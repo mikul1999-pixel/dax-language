@@ -452,11 +452,56 @@
   },
 
   "Format value": {
-    "prefix": "dax:format",
+    "prefix": "dax:fmt",
     "description": "Format a value as text.",
     "class": "UTILITY",
     "body": [
       "FORMAT(${1:value}, \"${2:format_string}\")"
+    ]
+  },
+
+  "Format number": {
+    "prefix": "dax:fmt:number",
+    "description": "Format a numeric value.",
+    "class": "UTILITY",
+    "body": [
+      "FORMAT(${1:value}, \"${2|{{fmt:number:options}}|}\")"
+    ]
+  },
+
+  "Format currency": {
+    "prefix": "dax:fmt:currency",
+    "description": "Format a currency value.",
+    "class": "UTILITY",
+    "body": [
+      "FORMAT(${1:value}, \"${2|{{fmt:currency:options}}|}\")"
+    ]
+  },
+
+  "Format percent": {
+    "prefix": "dax:fmt:percent",
+    "description": "Format a percent value.",
+    "class": "UTILITY",
+    "body": [
+      "FORMAT(${1:value}, \"${2|{{fmt:percent:options}}|}\")"
+    ]
+  },
+
+  "Format bps": {
+    "prefix": "dax:fmt:bps",
+    "description": "Format a value as basis points.",
+    "class": "UTILITY",
+    "body": [
+      "FORMAT(${1:value} * 10000, \"${2|{{fmt:bps:options}}|}\")"
+    ]
+  },
+
+  "Format date": {
+    "prefix": "dax:fmt:date",
+    "description": "Format a date value.",
+    "class": "UTILITY",
+    "body": [
+      "FORMAT(${1:value}, \"${2|{{fmt:date:options}}|}\")"
     ]
   },
 
