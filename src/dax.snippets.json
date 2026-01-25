@@ -36,17 +36,7 @@
     ]
   },
 
-  "Inline var": {
-    "prefix": "dax:var:inline",
-    "description": "Define a variable and return an inline expression.",
-    "class": "STRUCTURE",
-    "body": [
-      "VAR ${1:variable} = ${2:expression}",
-      "RETURN ${3:result}"
-    ]
-  },
-
-  "Yoy change": {
+  "YoY change": {
     "prefix": "dax:yoy",
     "description": "Compare a measure to its value one year earlier.",
     "class": "TIME INTELLIGENCE",
@@ -54,14 +44,14 @@
       "VAR CurrentValue = ${1:[Base Measure]}",
       "VAR PreviousYearValue = CALCULATE(",
       "    ${1:[Base Measure]},",
-      "    SAMEPERIODLASTYEAR(${2:'Date'[Date]})",
+      "    DATEADD(${2:'Date'[Date]}, -1, YEAR)",
       ")",
       "RETURN",
       "    DIVIDE(CurrentValue - PreviousYearValue, PreviousYearValue, 0)"
     ]
   },
 
-  "Mom change": {
+  "MoM change": {
     "prefix": "dax:mom",
     "description": "Compare a measure to its value one month earlier.",
     "class": "TIME INTELLIGENCE",
@@ -76,7 +66,7 @@
     ]
   },
 
-  "Qoq change": {
+  "QoQ change": {
     "prefix": "dax:qoq",
     "description": "Compare a measure to its value one quarter earlier.",
     "class": "TIME INTELLIGENCE",
@@ -127,20 +117,20 @@
     ]
   },
 
-  "Rolling 12 months": {
-    "prefix": "dax:r12",
-    "description": "Calculate a rolling 12‑month measure.",
+  "Rolling 7 days": {
+    "prefix": "dax:r7",
+    "description": "Calculate a rolling 7-day measure.",
     "class": "TIME INTELLIGENCE",
     "body": [
       "CALCULATE(",
       "    ${1:[Base Measure]},",
-      "    DATESINPERIOD(${2:'Date'[Date]}, MAX(${2:'Date'[Date]}), -12, MONTH)",
+      "    DATESINPERIOD(${2:'Date'[Date]}, MAX(${2:'Date'[Date]}), -6, DAY)",
       ")"
     ]
   },
 
-  "Growth rate": {
-    "prefix": "dax:growth",
+  "Percent change": {
+    "prefix": "dax:change",
     "description": "Calculate the change between two measures.",
     "class": "RATIOS & CHANGE",
     "body": [
@@ -160,7 +150,7 @@
       "    ${1:[Measure]},",
       "    CALCULATE(",
       "        ${1:[Measure]},",
-      "        ${2|ALL,ALLSELECTED|}(${3:'Table'[Column]})",
+      "        ${2|ALLSELECTED,ALL|}(${3:'Table'[Column]})",
       "    ),",
       "    0",
       ")"
@@ -168,8 +158,8 @@
   },
 
   "Calculate + filter": {
-    "prefix": "dax:calcfilter",
-    "description": "Apply a row‑level filter inside CALCULATE.",
+    "prefix": "dax:calc:filter",
+    "description": "Apply a row-level filter inside CALCULATE.",
     "class": "CONTEXT",
     "body": [
       "CALCULATE(",
@@ -183,13 +173,13 @@
   },
 
   "Calculate + all": {
-    "prefix": "dax:calcall",
+    "prefix": "dax:calc:all",
     "description": "Remove filters using ALL or ALLSELECTED inside CALCULATE.",
     "class": "CONTEXT",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
-      "    ${2|ALL,ALLSELECTED|}(${3:'Table'[Column]})",
+      "    ${2|ALLSELECTED,ALL|}(${3:'Table'[Column]})",
       ")"
     ]
   },
@@ -231,14 +221,29 @@
     ]
   },
 
-  "Crossfilter modifier": {
-    "prefix": "dax:crossfilter",
+  "Calculate + crossfilter": {
+    "prefix": "dax:calc:crossfilter",
     "description": "Modify relationship direction inside CALCULATE.",
     "class": "CONTEXT",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
-      "    CROSSFILTER(${2:'Table1'[Key]}, ${3:'Table2'[Key]}, ${4|BOTH,NONE,ONEWAY|})",
+      "    CROSSFILTER(${2:'Table1'[Key]}, ${3:'Table2'[Key]}, ${4|NONE,BOTH,ONEWAY|})",
+      ")"
+    ]
+  },
+
+  "Calculate + allexcept": {
+    "prefix": "dax:calc:allexcept",
+    "description": "Remove all filters except the specified columns using ALLEXCEPT inside CALCULATE.",
+    "class": "CONTEXT",
+    "body": [
+      "CALCULATE(",
+      "    ${1:[Measure]},",
+      "    ALLEXCEPT(",
+      "        ${2:'Table'},",
+      "        ${3:'Table'[Column]}${4:, 'Table'[AnotherColumn]}",
+      "    )",
       ")"
     ]
   },
@@ -246,7 +251,7 @@
   "Sumx basic": {
     "prefix": "dax:sumx",
     "description": "Iterate over a table and compute a row expression.",
-    "class": "TABLE SHAPING",
+    "class": "VIRTUAL TABLE SHAPING",
     "body": [
       "SUMX(",
       "    ${1:'Table'},",
@@ -258,7 +263,7 @@
   "Sumx + addcolumns": {
     "prefix": "dax:sumx:addcolumns",
     "description": "Iterate over a table extended with ADDCOLUMNS.",
-    "class": "TABLE SHAPING",
+    "class": "VIRTUAL TABLE SHAPING",
     "body": [
       "SUMX(",
       "    ADDCOLUMNS(",
@@ -273,7 +278,7 @@
   "Addcolumns basic": {
     "prefix": "dax:addcolumns",
     "description": "Add calculated columns to a table.",
-    "class": "TABLE SHAPING",
+    "class": "VIRTUAL TABLE SHAPING",
     "body": [
       "ADDCOLUMNS(",
       "    ${1:Table},",
@@ -285,7 +290,7 @@
   "Filter table": {
     "prefix": "dax:filter",
     "description": "Return rows that meet a condition.",
-    "class": "TABLE SHAPING",
+    "class": "VIRTUAL TABLE SHAPING",
     "body": [
       "FILTER(",
       "    ${1:Table},",
@@ -297,7 +302,7 @@
   "Topn selector": {
     "prefix": "dax:topn",
     "description": "Return the top N rows of a table.",
-    "class": "TABLE SHAPING",
+    "class": "VIRTUAL TABLE SHAPING",
     "body": [
       "TOPN(",
       "    ${1:N},",
@@ -311,13 +316,53 @@
   "Summarize table": {
     "prefix": "dax:summarize",
     "description": "Group a table and add calculated columns.",
-    "class": "TABLE SHAPING",
+    "class": "VIRTUAL TABLE SHAPING",
     "body": [
       "SUMMARIZE(",
       "    ${1:Table},",
       "    ${2:GroupByColumn1},",
       "    ${3:GroupByColumn2},",
       "    \"${4:NewColumn}\", ${5:expression}",
+      ")"
+    ]
+  },
+
+  "Generate table": {
+    "prefix": "dax:table:generate",
+    "description": "Generate a table by evaluating an expression for each row of another table.",
+    "class": "TABLE BUILDING",
+    "body": [
+      "GENERATE(",
+      "    ${1:Table},",
+      "    ${2:TableExpression}",
+      ")"
+    ]
+  },
+
+  "Union rows": {
+    "prefix": "dax:table:rows",
+    "description": "Create a table from multiple ROW expressions.",
+    "class": "TABLE BUILDING",
+    "body": [
+      "UNION(",
+      "    ROW(\"${1:Column}\", ${2:Value1}),",
+      "    ROW(\"${1:Column}\", ${3:Value2})",
+      ")"
+    ]
+  },
+
+  "Data table": {
+    "prefix": "dax:table:datatable",
+    "description": "Define a static table with typed columns and values.",
+    "class": "TABLE BUILDING",
+    "body": [
+      "DATATABLE(",
+      "    \"${1:Column1}\", ${2|STRING,INTEGER,DOUBLE,DATETIME,CURRENCY,BOOLEAN|},",
+      "    \"${3:Column2}\", ${4|STRING,INTEGER,DOUBLE,DATETIME,CURRENCY,BOOLEAN|},",
+      "    {",
+      "        { ${5:Value1}, ${6:Value2} },",
+      "        { ${7:Value3}, ${8:Value4} }",
+      "    }",
       ")"
     ]
   },
@@ -365,7 +410,7 @@
 
   "Coalesce fallback": {
     "prefix": "dax:coalesce",
-    "description": "Return the first non‑blank expression.",
+    "description": "Return the first non-blank expression.",
     "class": "LOGIC",
     "body": [
       "COALESCE(",

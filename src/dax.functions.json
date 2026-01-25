@@ -315,6 +315,13 @@
     "returns": "String"
   },
   {
+    "name": "DATATABLE",
+    "group": "Table",
+    "description": "Returns a table with data defined inline",
+    "syntax": "DATATABLE ( <Name>, <DataType> [, <Name>, <DataType> [, … ] ], <Data> )",
+    "returns": "Table"
+  },
+  {
     "name": "DATE",
     "group": "Date",
     "description": "Returns the specified date in datetime format",
