@@ -32,8 +32,14 @@ const constantFunctionPattern = {
 };
 
 // Keywords
-const typeKeywordsList = ['STRING', 'INTEGER', 'DOUBLE', 'DATETIME', 'CURRENCY', 'BOOLEAN', 'TABLE', 'COLUMN'];
-const wordOperatorsList = ['IN'];
+const typeKeywordsList = daxKeywords
+  .filter(k => k.kind === 'dataType' || k.kind === 'definition')
+  .map(k => k.name);
+
+const wordOperatorsList = daxKeywords
+  .filter(k => k.kind === 'operator')
+  .map(k => k.name);
+  
 const rawKeywords = daxKeywords.map(k => k.name.replace(/ /g, '\\s+'));
 
 const typeKeywords = rawKeywords.filter(k => typeKeywordsList.includes(k.toUpperCase()));

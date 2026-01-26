@@ -1,101 +1,121 @@
 [
   {
     "name": "VAR",
-    "description": "Declares a named variable to store the result of an expression.",
+    "kind": "queryControl",
+    "description": "Stores the result of an expression as a named variable.",
     "syntax": "VAR <name> = <expression>"
   },
   {
     "name": "RETURN",
-    "description": "Output the result of a variable block.",
+    "kind": "queryControl",
+    "description": "Outputs the result of a variable block.",
     "syntax": "RETURN <expression>"
   },
   {
     "name": "EVALUATE",
+    "kind": "statement",
     "description": "Executes a DAX query and returns a table.",
     "syntax": "EVALUATE <table>"
   },
   {
     "name": "DEFINE",
-    "description": "Introduces a query definition block for local measures, columns, or tables.",
+    "kind": "statement",
+    "description": "Introduces definitions that apply to EVALUATE statements.",
     "syntax": "DEFINE MEASURE... | VAR..."
   },
   {
     "name": "MEASURE",
-    "description": "Defines a measure within a query scope (used inside DEFINE).",
+    "kind": "definition",
+    "description": "Defines a measure within a query scope (inside DEFINE).",
     "syntax": "MEASURE <table>[<name>] = <expression>"
   },
   {
     "name": "COLUMN",
-    "description": "Defines a calculated column within a query scope (used inside DEFINE).",
+    "kind": "definition",
+    "description": "Defines a calculated column within a query scope (inside DEFINE).",
     "syntax": "COLUMN <table>[<name>] = <expression>"
   },
   {
     "name": "TABLE",
-    "description": "Defines a calculated table within a query scope (used inside DEFINE).",
+    "kind": "definition",
+    "description": "Defines a calculated table within a query scope (inside DEFINE).",
     "syntax": "TABLE <name> = <expression>"
   },
   {
     "name": "ORDER BY",
-    "description": "Sorts the result of an EVALUATE statement or Window function.",
+    "kind": "clause",
+    "description": "Sorts the results of an EVALUATE statement.",
     "syntax": "ORDER BY <column> [ASC|DESC]"
   },
   {
     "name": "START AT",
-    "description": "Specifies the starting values for an ORDER BY clause in a query.",
+    "kind": "clause",
+    "description": "Specifies starting values for ORDER BY.",
     "syntax": "ORDER BY ... START AT <value>, ..."
   },
   {
     "name": "PARTITION BY",
+    "kind": "clause",
     "description": "Divides the table into partitions for window functions.",
     "syntax": "PARTITION BY <column>"
   },
   {
     "name": "MATCHBY",
-    "description": "Defines the columns used to match data in window functions.",
+    "kind": "clause",
+    "description": "Defines matching columns for window functions.",
     "syntax": "MATCHBY <column>"
   },
   {
     "name": "ASC",
-    "description": "Sorts the column in ascending order.",
+    "kind": "modifier",
+    "description": "Specifies ascending sort order.",
     "syntax": "ORDER BY <column> ASC"
   },
   {
     "name": "DESC",
-    "description": "Sorts the column in descending order.",
+    "kind": "modifier",
+    "description": "Specifies descending sort order.",
     "syntax": "ORDER BY <column> DESC"
   },
   {
     "name": "IN",
-    "description": "Logical operator to check if a value exists in a list or column.",
+    "kind": "operator",
+    "description": "Compares a value against a list or column.",
     "syntax": "<expr> IN { \"A\", \"B\" }"
   },
   {
     "name": "STRING",
+    "kind": "dataType",
     "description": "Data type definition for DATATABLE.",
     "syntax": "DATATABLE ( \"Name\", STRING, ... )"
   },
   {
     "name": "INTEGER",
+    "kind": "dataType",
     "description": "Data type definition for DATATABLE.",
     "syntax": "DATATABLE ( \"Name\", INTEGER, ... )"
   },
   {
     "name": "DOUBLE",
+    "kind": "dataType",
     "description": "Data type definition for DATATABLE.",
     "syntax": "DATATABLE ( \"Name\", DOUBLE, ... )"
   },
   {
     "name": "DATETIME",
+    "kind": "dataType",
     "description": "Data type definition for DATATABLE.",
     "syntax": "DATATABLE ( \"Name\", DATETIME, ... )"
   },
   {
     "name": "CURRENCY",
+    "kind": "dataType",
     "description": "Data type definition for DATATABLE.",
     "syntax": "DATATABLE ( \"Name\", CURRENCY, ... )"
   },
   {
     "name": "BOOLEAN",
+    "kind": "dataType",
     "description": "Data type definition for DATATABLE.",
     "syntax": "DATATABLE ( \"Name\", BOOLEAN, ... )"
   }

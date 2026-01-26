@@ -62,9 +62,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
         
         // Create documentation with code preview
         const documentation = new vscode.MarkdownString();
-        documentation.appendMarkdown(`**${name}**\n\n`);
-        documentation.appendMarkdown(`${snippet.description}\n\n`);
-        documentation.appendMarkdown(`**Snippet:**\n`);
+        documentation.appendMarkdown(`*${name}*: ${snippet.description}\n\n`);
         
         // Show first N lines of the snippet
         const previewLines = 6;
@@ -99,15 +97,12 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       const item = new vscode.CompletionItem(fn.name, vscode.CompletionItemKind.Function);
       
       // Set description
-      item.detail = `${fn.group} - ${fn.returns}`;
+      item.detail = `${fn.group}`;
       
       // Set full documentation
       const documentation = new vscode.MarkdownString();
-      documentation.appendMarkdown(`**${fn.name}**\n\n`);
+      documentation.appendMarkdown(`\`\`\`dax\n${fn.syntax}\n-> ${fn.returns}\n\`\`\`\n`);
       documentation.appendMarkdown(`${fn.description}\n\n`);
-      documentation.appendMarkdown(`**Syntax:**\n\`\`\`dax\n${fn.syntax}\n\`\`\`\n\n`);
-      documentation.appendMarkdown(`**Returns:** ${fn.returns}\n\n`);
-      documentation.appendMarkdown(`**Category:** ${fn.group}`);
       item.documentation = documentation;
 
       // Add command to show parameter hint
@@ -118,7 +113,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       };
       
       // Add function completions
-      item.insertText = fn.name;
+      item.insertText = new vscode.SnippetString(`${fn.name}($0)`);
       
       // Sort order
       item.sortText = `1_${fn.name}`;
@@ -130,14 +125,11 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     daxKeywords.forEach((kw: any) => {
       const item = new vscode.CompletionItem(kw.name, vscode.CompletionItemKind.Keyword);
       
-      item.detail = 'Keyword';
+      item.detail = `${kw.kind}`;
       
       const documentation = new vscode.MarkdownString();
-      documentation.appendMarkdown(`**${kw.name}**\n\n`);
+      documentation.appendMarkdown(`\`\`\`dax\n${kw.syntax}\n\`\`\`\n`);
       documentation.appendMarkdown(`${kw.description}\n\n`);
-      if (kw.syntax) {
-        documentation.appendMarkdown(`**Syntax:**\n\`\`\`dax\n${kw.syntax}\n\`\`\`\n`);
-      }
       item.documentation = documentation;
       
       // Keywords appear first
@@ -172,7 +164,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     const position = editor.selection.active;
     this.currentDecoration = vscode.window.createTextEditorDecorationType({
       after: {
-        contentText: ` ${syntax.replace(functionName, '').trim()} - Press Shift+Enter to insert`,
+        contentText: ` ${syntax.replace(functionName, '').trim()} • Shift+Enter`,
         color: new vscode.ThemeColor('editorCodeLens.foreground'),
         fontStyle: 'italic'
       }
@@ -202,7 +194,12 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
         return new vscode.SnippetString(`${functionName}($0)`);
       }
       
-      const paramsString = match[1];
+      let paramsString = match[1];
+
+      paramsString = paramsString
+        .replace(/[\[\]]/g, '')      // Remove [ and ]
+        .replace(/\.\.\./g, '');     // Remove ...
+
       const paramList = this.splitParameters(paramsString);
       
       if (paramList.length === 0) {
@@ -214,12 +211,11 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       let snippetString = `${functionName}(`;
       
       paramList.forEach((param, index) => {
-        // Clean up parameter: remove < >, [ ], and whitespace
-        let cleanParam = param.trim();
-        cleanParam = cleanParam.replace(/^<(.+)>$/, '$1');
-        cleanParam = cleanParam.replace(/^\[<(.+)>\]$/, '$1');
-        cleanParam = cleanParam.replace(/^\[(.+)\]$/, '$1');
-        
+        // Clean up parameter: remove <, >, and whitespace
+        let cleanParam = param
+          .replace(/[<>]/g, '')
+          .trim();
+
         // Add comma separator for subsequent parameters
         if (index > 0) {
           snippetString += ', ';
@@ -250,17 +246,33 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
 
     try {
       const document = editor.document;
-      const position = editor.selection.active;
-
-      // Get the word before the cursor
-      const wordRange = document.getWordRangeAtPosition(position);
-      if (!wordRange) {
-        vscode.window.showInformationMessage('No function name found at cursor position');
+      let position = editor.selection.active;
+      const lineText = document.lineAt(position.line).text;
+      let beforeCursor = lineText.slice(0, position.character);
+      
+      // Adjust cursor if after closing parens
+      if (beforeCursor.endsWith(')')) {
+        position = position.translate(0, -1);
+        editor.selection = new vscode.Selection(position, position);
+        beforeCursor = lineText.slice(0, position.character);
+      }
+      
+      // Match function name and (text)
+      const match = beforeCursor.match(/([A-Z_][A-Z0-9_]*)\s*\(([^()]*)$/i);
+      if (!match) {
+        vscode.window.showInformationMessage('Cursor is not inside a function call');
         return;
       }
-
-      const functionName = document.getText(wordRange).toUpperCase();
-
+      
+      const functionName = match[1].toUpperCase();
+      const existingArgs = match[2];
+      
+      // Prevent double expand
+      if (existingArgs.trim().length > 0) {
+        vscode.window.showInformationMessage('Parameters already expanded');
+        return;
+      }
+      
       // Look up the function
       const fn = daxFunctions.find(
         (f: any) => f.name.toUpperCase() === functionName
@@ -270,13 +282,37 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
         vscode.window.showInformationMessage(`Function '${functionName}' not found`);
         return;
       }
-
-      // Build snippet
-      const snippet = this.createFunctionSnippet(fn.syntax, fn.name);
-
-      // Replace the function name with the snippet
-      await editor.insertSnippet(snippet, wordRange);
-
+      
+      // Pull parameter snippet
+      const fullSnippet = this.createFunctionSnippet(fn.syntax, functionName);
+      const fullSnippetText = fullSnippet.value;
+      
+      // Extract (between the parens)
+      const paramsMatch = fullSnippetText.match(/\((.+)\)\$0$/);
+      if (!paramsMatch) {
+        vscode.window.showInformationMessage(`Function '${functionName}' has no parameters`);
+        return;
+      }
+      
+      const paramsSnippetText = paramsMatch[1];
+      
+      // Calc replacement range (inside parens)
+      const openParenIndex = beforeCursor.lastIndexOf('(');
+      const start = new vscode.Position(position.line, openParenIndex + 1);
+      
+      // Check for closing parens after cursor
+      const afterCursor = lineText.slice(position.character);
+      const closeParenMatch = afterCursor.match(/^\s*\)/);
+      const end = closeParenMatch 
+        ? new vscode.Position(position.line, position.character + closeParenMatch[0].length - 1)
+        : position;
+      
+      const replaceRange = new vscode.Range(start, end);
+      
+      // Insert parameter snippet
+      const snippet = new vscode.SnippetString(paramsSnippetText);
+      await editor.insertSnippet(snippet, replaceRange);
+      
       // Clear the decoration
       if (this.currentDecoration && this.currentEditor) {
         this.currentEditor.setDecorations(this.currentDecoration, []);

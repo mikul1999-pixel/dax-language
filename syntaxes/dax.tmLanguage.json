@@ -70,11 +70,11 @@
       "patterns": [
         {
           "name": "keyword.control.dax",
-          "match": "(?i)\\b(PARTITION\\s+BY|ORDER\\s+BY|START\\s+AT|EVALUATE|MEASURE|MATCHBY|RETURN|DEFINE|DESC|VAR|ASC)\\b"
+          "match": "(?i)\\b(PARTITION\\s+BY|ORDER\\s+BY|START\\s+AT|EVALUATE|MATCHBY|RETURN|DEFINE|DESC|VAR|ASC)\\b"
         },
         {
           "name": "storage.type.dax",
-          "match": "(?i)\\b(DATETIME|CURRENCY|INTEGER|BOOLEAN|COLUMN|STRING|DOUBLE|TABLE)\\b"
+          "match": "(?i)\\b(DATETIME|CURRENCY|MEASURE|INTEGER|BOOLEAN|COLUMN|STRING|DOUBLE|TABLE)\\b"
         }
       ]
     },

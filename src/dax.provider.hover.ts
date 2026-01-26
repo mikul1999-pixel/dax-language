@@ -23,12 +23,12 @@ export class DaxHoverProvider implements vscode.HoverProvider {
     const functionInfo = daxFunctions.find((fn: any) => fn.name === word);
     if (functionInfo) {
       const markdown = new vscode.MarkdownString();
-      markdown.appendMarkdown(`### ${functionInfo.name}\n\n`);
+      markdown.isTrusted = true;
+
+      markdown.appendMarkdown(`\`\`\`dax\n${functionInfo.syntax} -> ${functionInfo.returns}\n\`\`\`\n`);
+      markdown.appendMarkdown(`*function* · ${functionInfo.group}\n\n`);
       markdown.appendMarkdown(`${functionInfo.description}\n\n`);
-      markdown.appendMarkdown(`**Syntax:**\n\`\`\`dax\n${functionInfo.syntax}\n\`\`\`\n\n`);
-      markdown.appendMarkdown(`**Returns:** ${functionInfo.returns}\n\n`);
-      markdown.appendMarkdown(`**Category:** ${functionInfo.group}`);
-      
+
       return new vscode.Hover(markdown);
     }
     
@@ -36,12 +36,12 @@ export class DaxHoverProvider implements vscode.HoverProvider {
     const keywordInfo = daxKeywords.find((kw: any) => kw.name === word);
     if (keywordInfo) {
       const markdown = new vscode.MarkdownString();
-      markdown.appendMarkdown(`### ${keywordInfo.name}\n\n`);
+      markdown.isTrusted = true;
+
+      markdown.appendMarkdown(`\`\`\`dax\n${keywordInfo.syntax}\n\`\`\`\n`);
+      markdown.appendMarkdown(`*keyword* · ${keywordInfo.kind}\n\n`);
       markdown.appendMarkdown(`${keywordInfo.description}\n\n`);
-      if (keywordInfo.syntax) {
-        markdown.appendMarkdown(`**Syntax:**\n\`\`\`dax\n${keywordInfo.syntax}\n\`\`\`\n`);
-      }
-      
+
       return new vscode.Hover(markdown);
     }
     

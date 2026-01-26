@@ -2,7 +2,7 @@
   "Var block": {
     "prefix": "dax:var",
     "description": "Define a single variable and return a result.",
-    "class": "STRUCTURE",
+    "class": "Structure",
     "body": [
       "VAR ${1:variable} = ${2:expression}",
       "RETURN",
@@ -13,7 +13,7 @@
   "Multiple var block": {
     "prefix": "dax:vars",
     "description": "Define multiple variables and return a result.",
-    "class": "STRUCTURE",
+    "class": "Structure",
     "body": [
       "VAR ${1:variable1} = ${2:expression1}",
       "VAR ${3:variable2} = ${4:expression2}",
@@ -25,7 +25,7 @@
   "Var block (indented)": {
     "prefix": "dax:vars:indent",
     "description": "Define variables with indented expressions.",
-    "class": "STRUCTURE",
+    "class": "Structure",
     "body": [
       "VAR ${1:variable1} =",
       "    ${2:expression1}",
@@ -39,7 +39,7 @@
   "YoY change": {
     "prefix": "dax:yoy",
     "description": "Compare a measure to its value one year earlier.",
-    "class": "TIME INTELLIGENCE",
+    "class": "Time Intelligence",
     "body": [
       "VAR CurrentValue = ${1:[Base Measure]}",
       "VAR PreviousYearValue = CALCULATE(",
@@ -54,7 +54,7 @@
   "MoM change": {
     "prefix": "dax:mom",
     "description": "Compare a measure to its value one month earlier.",
-    "class": "TIME INTELLIGENCE",
+    "class": "Time Intelligence",
     "body": [
       "VAR CurrentValue = ${1:[Base Measure]}",
       "VAR PreviousMonthValue = CALCULATE(",
@@ -69,7 +69,7 @@
   "QoQ change": {
     "prefix": "dax:qoq",
     "description": "Compare a measure to its value one quarter earlier.",
-    "class": "TIME INTELLIGENCE",
+    "class": "Time Intelligence",
     "body": [
       "VAR CurrentValue = ${1:[Base Measure]}",
       "VAR PreviousQuarterValue = CALCULATE(",
@@ -84,7 +84,7 @@
   "Year to date": {
     "prefix": "dax:ytd",
     "description": "Calculate a measure from the start of the year to the current date.",
-    "class": "TIME INTELLIGENCE",
+    "class": "Time Intelligence",
     "body": [
       "CALCULATE(",
       "    ${1:[Base Measure]},",
@@ -96,7 +96,7 @@
   "Quarter to date": {
     "prefix": "dax:qtd",
     "description": "Calculate a measure from the start of the quarter to the current date.",
-    "class": "TIME INTELLIGENCE",
+    "class": "Time Intelligence",
     "body": [
       "CALCULATE(",
       "    ${1:[Base Measure]},",
@@ -108,7 +108,7 @@
   "Month to date": {
     "prefix": "dax:mtd",
     "description": "Calculate a measure from the start of the month to the current date.",
-    "class": "TIME INTELLIGENCE",
+    "class": "Time Intelligence",
     "body": [
       "CALCULATE(",
       "    ${1:[Base Measure]},",
@@ -120,7 +120,7 @@
   "Rolling 7 days": {
     "prefix": "dax:r7",
     "description": "Calculate a rolling 7-day measure.",
-    "class": "TIME INTELLIGENCE",
+    "class": "Time Intelligence",
     "body": [
       "CALCULATE(",
       "    ${1:[Base Measure]},",
@@ -132,7 +132,7 @@
   "Percent change": {
     "prefix": "dax:change",
     "description": "Calculate the change between two measures.",
-    "class": "RATIOS & CHANGE",
+    "class": "Ratios & Change",
     "body": [
       "VAR CurrentValue = ${1:[Measure]}",
       "VAR PreviousValue = ${2:[Previous Measure]}",
@@ -144,7 +144,7 @@
   "Contribution ratio": {
     "prefix": "dax:contribution",
     "description": "Calculate a measure as a share of the total.",
-    "class": "RATIOS & CHANGE",
+    "class": "Ratios & Change",
     "body": [
       "DIVIDE(",
       "    ${1:[Measure]},",
@@ -160,7 +160,7 @@
   "Calculate + filter": {
     "prefix": "dax:calc:filter",
     "description": "Apply a row-level filter inside CALCULATE.",
-    "class": "CONTEXT",
+    "class": "Context",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
@@ -175,7 +175,7 @@
   "Calculate + all": {
     "prefix": "dax:calc:all",
     "description": "Remove filters using ALL or ALLSELECTED inside CALCULATE.",
-    "class": "CONTEXT",
+    "class": "Context",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
@@ -187,7 +187,7 @@
   "Calculate + removefilters": {
     "prefix": "dax:calc:removefilters",
     "description": "Clear filters using REMOVEFILTERS inside CALCULATE.",
-    "class": "CONTEXT",
+    "class": "Context",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
@@ -199,7 +199,7 @@
   "Calculate + keepfilters": {
     "prefix": "dax:calc:keepfilters",
     "description": "Apply a filter without overriding existing filters.",
-    "class": "CONTEXT",
+    "class": "Context",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
@@ -211,7 +211,7 @@
   "Calculate + multiple filters": {
     "prefix": "dax:calc:multi",
     "description": "Apply multiple filters inside CALCULATE.",
-    "class": "CONTEXT",
+    "class": "Context",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
@@ -224,7 +224,7 @@
   "Calculate + crossfilter": {
     "prefix": "dax:calc:crossfilter",
     "description": "Modify relationship direction inside CALCULATE.",
-    "class": "CONTEXT",
+    "class": "Context",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
@@ -236,7 +236,7 @@
   "Calculate + allexcept": {
     "prefix": "dax:calc:allexcept",
     "description": "Remove all filters except the specified columns using ALLEXCEPT inside CALCULATE.",
-    "class": "CONTEXT",
+    "class": "Context",
     "body": [
       "CALCULATE(",
       "    ${1:[Measure]},",
@@ -251,7 +251,7 @@
   "Sumx basic": {
     "prefix": "dax:sumx",
     "description": "Iterate over a table and compute a row expression.",
-    "class": "VIRTUAL TABLE SHAPING",
+    "class": "Table Shaping",
     "body": [
       "SUMX(",
       "    ${1:'Table'},",
@@ -263,7 +263,7 @@
   "Sumx + addcolumns": {
     "prefix": "dax:sumx:addcolumns",
     "description": "Iterate over a table extended with ADDCOLUMNS.",
-    "class": "VIRTUAL TABLE SHAPING",
+    "class": "Table Shaping",
     "body": [
       "SUMX(",
       "    ADDCOLUMNS(",
@@ -278,7 +278,7 @@
   "Addcolumns basic": {
     "prefix": "dax:addcolumns",
     "description": "Add calculated columns to a table.",
-    "class": "VIRTUAL TABLE SHAPING",
+    "class": "Table Shaping",
     "body": [
       "ADDCOLUMNS(",
       "    ${1:Table},",
@@ -290,7 +290,7 @@
   "Filter table": {
     "prefix": "dax:filter",
     "description": "Return rows that meet a condition.",
-    "class": "VIRTUAL TABLE SHAPING",
+    "class": "Table Shaping",
     "body": [
       "FILTER(",
       "    ${1:Table},",
@@ -302,7 +302,7 @@
   "Topn selector": {
     "prefix": "dax:topn",
     "description": "Return the top N rows of a table.",
-    "class": "VIRTUAL TABLE SHAPING",
+    "class": "Table Shaping",
     "body": [
       "TOPN(",
       "    ${1:N},",
@@ -316,7 +316,7 @@
   "Summarize table": {
     "prefix": "dax:summarize",
     "description": "Group a table and add calculated columns.",
-    "class": "VIRTUAL TABLE SHAPING",
+    "class": "Table Shaping",
     "body": [
       "SUMMARIZE(",
       "    ${1:Table},",
@@ -330,7 +330,7 @@
   "Generate table": {
     "prefix": "dax:table:generate",
     "description": "Generate a table by evaluating an expression for each row of another table.",
-    "class": "TABLE BUILDING",
+    "class": "Table Building",
     "body": [
       "GENERATE(",
       "    ${1:Table},",
@@ -342,7 +342,7 @@
   "Union rows": {
     "prefix": "dax:table:rows",
     "description": "Create a table from multiple ROW expressions.",
-    "class": "TABLE BUILDING",
+    "class": "Table Building",
     "body": [
       "UNION(",
       "    ROW(\"${1:Column}\", ${2:Value1}),",
@@ -354,7 +354,7 @@
   "Data table": {
     "prefix": "dax:table:datatable",
     "description": "Define a static table with typed columns and values.",
-    "class": "TABLE BUILDING",
+    "class": "Table Building",
     "body": [
       "DATATABLE(",
       "    \"${1:Column1}\", ${2|STRING,INTEGER,DOUBLE,DATETIME,CURRENCY,BOOLEAN|},",
@@ -370,7 +370,7 @@
   "If with blank": {
     "prefix": "dax:if",
     "description": "Return a value when a condition is true, otherwise blank.",
-    "class": "LOGIC",
+    "class": "Logic",
     "body": [
       "IF(",
       "    ${1:condition},",
@@ -383,7 +383,7 @@
   "Switch basic": {
     "prefix": "dax:switch",
     "description": "Return a result based on matching values.",
-    "class": "LOGIC",
+    "class": "Logic",
     "body": [
       "SWITCH(",
       "    ${1:expression},",
@@ -397,7 +397,7 @@
   "Switch true pattern": {
     "prefix": "dax:switch:true",
     "description": "Return a result based on matching conditions.",
-    "class": "LOGIC",
+    "class": "Logic",
     "body": [
       "SWITCH(",
       "    TRUE(),",
@@ -411,7 +411,7 @@
   "Coalesce fallback": {
     "prefix": "dax:coalesce",
     "description": "Return the first non-blank expression.",
-    "class": "LOGIC",
+    "class": "Logic",
     "body": [
       "COALESCE(",
       "    ${1:expression},",
@@ -423,7 +423,7 @@
   "Divide safe": {
     "prefix": "dax:divide",
     "description": "Divide two expressions with a safe default.",
-    "class": "LOGIC",
+    "class": "Logic",
     "body": [
       "DIVIDE(",
       "    ${1:numerator},",
@@ -436,7 +436,7 @@
   "Related lookup": {
     "prefix": "dax:related",
     "description": "Retrieve a related column value.",
-    "class": "MODEL NAVIGATION",
+    "class": "Model Navigation",
     "body": [
       "RELATED(${1:'Table'[Column]})"
     ]
@@ -445,7 +445,7 @@
   "Relatedtable lookup": {
     "prefix": "dax:relatedtable",
     "description": "Retrieve related rows from another table.",
-    "class": "MODEL NAVIGATION",
+    "class": "Model Navigation",
     "body": [
       "RELATEDTABLE(${1:'Table'})"
     ]
@@ -454,7 +454,7 @@
   "Format value": {
     "prefix": "dax:fmt",
     "description": "Format a value as text.",
-    "class": "UTILITY",
+    "class": "Utility",
     "body": [
       "FORMAT(${1:value}, \"${2:format_string}\")"
     ]
@@ -463,7 +463,7 @@
   "Format number": {
     "prefix": "dax:fmt:number",
     "description": "Format a numeric value.",
-    "class": "UTILITY",
+    "class": "Utility",
     "body": [
       "FORMAT(${1:value}, \"${2|{{fmt:number:options}}|}\")"
     ]
@@ -472,7 +472,7 @@
   "Format currency": {
     "prefix": "dax:fmt:currency",
     "description": "Format a currency value.",
-    "class": "UTILITY",
+    "class": "Utility",
     "body": [
       "FORMAT(${1:value}, \"${2|{{fmt:currency:options}}|}\")"
     ]
@@ -481,7 +481,7 @@
   "Format percent": {
     "prefix": "dax:fmt:percent",
     "description": "Format a percent value.",
-    "class": "UTILITY",
+    "class": "Utility",
     "body": [
       "FORMAT(${1:value}, \"${2|{{fmt:percent:options}}|}\")"
     ]
@@ -490,7 +490,7 @@
   "Format bps": {
     "prefix": "dax:fmt:bps",
     "description": "Format a value as basis points.",
-    "class": "UTILITY",
+    "class": "Utility",
     "body": [
       "FORMAT(${1:value} * 10000, \"${2|{{fmt:bps:options}}|}\")"
     ]
@@ -499,7 +499,7 @@
   "Format date": {
     "prefix": "dax:fmt:date",
     "description": "Format a date value.",
-    "class": "UTILITY",
+    "class": "Utility",
     "body": [
       "FORMAT(${1:value}, \"${2|{{fmt:date:options}}|}\")"
     ]
@@ -508,7 +508,7 @@
   "Isblank guard": {
     "prefix": "dax:isblank",
     "description": "Return zero when an expression is blank.",
-    "class": "UTILITY",
+    "class": "Utility",
     "body": [
       "IF(",
       "    ISBLANK(${1:expression}),",
