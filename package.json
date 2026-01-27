@@ -3,6 +3,7 @@
   "displayName": "DAX Language Syntax vM99",
   "description": "DAX language support for Power BI",
   "version": "0.1.0",
+  "icon": "media/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/mikul1999-pixel/dax-language-syntax-m99.git"

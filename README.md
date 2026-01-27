@@ -1,10 +1,11 @@
-# DAX Language Support
+# DAX Language Syntax
 
 _***my personal version**_
 
-vscode extension for DAX (Data Analysis Expressions) for Power BI with syntax highlighting, autocomplete, hover documentation, and pattern snippets. 
+vscode extension to support syntax for DAX (Data Analysis Expressions) for Power BI. Treats DAX like a standalone language since .tmdl's are bad. Compatible with ```.dax``` file types
 
-Supports ```.dax``` file types
+## Disclaimer
+*This extension is just a simple parser. It is not a full LSP and it does not have model context. It is a personal project, so ongoing support may not be provided.*
 
 ## Features
 
@@ -20,13 +21,6 @@ Supports ```.dax``` file types
 - Type ```dax:``` to browse code snippets. Refer to ```src/dax.snippets.json``` in the repo for list of specialized patterns
 
 In the extension settings, you can toggle "Show inline parameter hints"
-
-## Fair Warning
-_This is a personal project. Features and functionality may change._
-<br>
-_Code snippets are intentionally minimal. Not meant to be an exhaustive list or full DAX cookbook._
-<br>
-_This extension is not an LSP or Parser. Language context not supported._
 
 
 ## Resources
