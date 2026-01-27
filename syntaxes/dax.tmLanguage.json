@@ -73,7 +73,7 @@
           "match": "(?i)\\b(PARTITION\\s+BY|ORDER\\s+BY|START\\s+AT|EVALUATE|MATCHBY|RETURN|DEFINE|DESC|VAR|ASC)\\b"
         },
         {
-          "name": "storage.type.dax",
+          "name": "keyword.operator.type.dax",
           "match": "(?i)\\b(DATETIME|CURRENCY|MEASURE|INTEGER|BOOLEAN|COLUMN|STRING|DOUBLE|TABLE)\\b"
         }
       ]
@@ -173,7 +173,17 @@
     "table-column-references": {
       "patterns": [
         {
-          "name": "variable.other.column.dax",
+          "begin": "(\\b\\w+|'[^']+')\\s*\\[",
+          "end": "\\]",
+          "patterns": [
+            {
+              "name": "keyword.operator.column.dax",
+              "match": "[^\\]]+"
+            }
+          ]
+        },
+        {
+          "name": "variable.other.measure.dax",
           "match": "\\[[^\\]]+\\]"
         }
       ]

@@ -110,7 +110,7 @@ const grammar = {
           "match": `(?i)\\b(${sortByLength(controlKeywords).join('|')})\\b`
         },
         {
-          "name": "storage.type.dax",
+          "name": "keyword.operator.type.dax",
           "match": `(?i)\\b(${sortByLength(typeKeywords).join('|')})\\b`
         }
       ]
@@ -156,7 +156,17 @@ const grammar = {
     "table-column-references": {
       "patterns": [
         {
-          "name": "variable.other.column.dax",
+          "begin": "(\\b\\w+|'[^']+')\\s*\\[",
+          "end": "\\]",
+          "patterns": [
+            {
+              "name": "keyword.operator.column.dax",
+              "match": "[^\\]]+"
+            }
+          ]
+        },
+        {
+          "name": "variable.other.measure.dax",
           "match": "\\[[^\\]]+\\]"
         }
       ]

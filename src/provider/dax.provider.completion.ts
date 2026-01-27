@@ -8,11 +8,10 @@ const daxSnippets = require('../dax.snippets.json');
 export class DaxCompletionProvider implements vscode.CompletionItemProvider {
   private currentDecoration?: vscode.TextEditorDecorationType;
   private currentEditor?: vscode.TextEditor;
-  private parser = new DaxDocumentParser();
   private cache = new Map<string, TableColumnMap>();
   private parseTimeout?: NodeJS.Timeout;
 
-  constructor() {
+  constructor(private parser: DaxDocumentParser) {
     // Invalidate cache when document changes
     vscode.workspace.onDidChangeTextDocument(event => {
       if (event.document.languageId !== 'dax') {
@@ -191,6 +190,23 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
         }
       }
     }
+
+    // Add variable completions
+    const variables = this.parser.parseVariables(document);
+
+    for (const varInfo of variables) {
+      // Only suggest variables declared before current position
+      if (varInfo.declarationLine < position.line) {
+        completionItems.push({
+          label: varInfo.name,
+          kind: vscode.CompletionItemKind.Variable,
+          detail: 'Variable',
+          documentation: `Variable declared on line ${varInfo.declarationLine + 1}`,
+          sortText: '0_' + varInfo.name, // Sort variables first
+          insertText: varInfo.name,
+        });
+      }
+    }
     
     // Add function completions
     daxFunctions.forEach((fn: any) => {
@@ -216,7 +232,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       item.insertText = new vscode.SnippetString(`${fn.name}($0)`);
       
       // Sort order
-      item.sortText = `1_${fn.name}`;
+      item.sortText = `2_${fn.name}`;
       
       completionItems.push(item);
     });
@@ -233,7 +249,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       item.documentation = documentation;
       
       // Keywords appear first
-      item.sortText = `0_${kw.name}`;
+      item.sortText = `1_${kw.name}`;
       
       completionItems.push(item);
     });
@@ -273,14 +289,14 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     const range = new vscode.Range(position, position);
     editor.setDecorations(this.currentDecoration, [{ range }]);
 
-    // Auto-clear after 5 seconds
+    // Auto-clear after 3 seconds
     setTimeout(() => {
       if (this.currentDecoration) {
         this.currentDecoration.dispose();
         this.currentDecoration = undefined;
         this.currentEditor = undefined;
       }
-    }, 5000);
+    }, 3000);
   }
 
   // Create snippet from function syntax
