@@ -1,12 +1,52 @@
 import * as vscode from 'vscode';
+import { DaxDocumentParser, TableColumnMap } from '../parser/dax.document.parser';
 
-const daxFunctions = require('./dax.functions.json');
-const daxKeywords = require('./dax.keywords.json');
-const daxSnippets = require('./dax.snippets.json');
+const daxFunctions = require('../dax.functions.json');
+const daxKeywords = require('../dax.keywords.json');
+const daxSnippets = require('../dax.snippets.json');
 
 export class DaxCompletionProvider implements vscode.CompletionItemProvider {
   private currentDecoration?: vscode.TextEditorDecorationType;
   private currentEditor?: vscode.TextEditor;
+  private parser = new DaxDocumentParser();
+  private cache = new Map<string, TableColumnMap>();
+  private parseTimeout?: NodeJS.Timeout;
+
+  constructor() {
+    // Invalidate cache when document changes
+    vscode.workspace.onDidChangeTextDocument(event => {
+      if (event.document.languageId !== 'dax') {
+        return;
+      }
+      
+      // Debounce: wait 300ms after last keystroke
+      clearTimeout(this.parseTimeout);
+      this.parseTimeout = setTimeout(() => {
+        this.invalidateCache(event.document.uri);
+      }, 300);
+    });
+    
+    // Clear cache when document closes
+    vscode.workspace.onDidCloseTextDocument(document => {
+      this.invalidateCache(document.uri);
+    });
+  }
+  
+  private invalidateCache(uri: vscode.Uri): void {
+    this.cache.delete(uri.toString());
+  }
+  
+  private getParsedDocument(document: vscode.TextDocument): TableColumnMap {
+    const key = document.uri.toString();
+    
+    if (this.cache.has(key)) {
+      return this.cache.get(key)!;
+    }
+    
+    const parsed = this.parser.parse(document);
+    this.cache.set(key, parsed);
+    return parsed;
+  }
   
   provideCompletionItems(
     document: vscode.TextDocument,
@@ -18,6 +58,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     const linePrefix = document.lineAt(position).text.substring(0, position.character);
     const isDaxSnippetTrigger = linePrefix.toLowerCase().includes('dax:');
     const completionItems: vscode.CompletionItem[] = [];
+    const parsed = this.getParsedDocument(document);
 
     // parse tricky snippet options once. only through SnippetString, not json-->TS + SnippetString
     const SNIPPET_OPTIONS_MAP: Record<string, string[]> = {
@@ -90,6 +131,65 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       });
       
       return completionItems;
+    }
+
+    // Add column/measure completions. If inside []
+    const insideBrackets = linePrefix.match(/(?:'([^']+)'|([A-Z_][A-Z0-9_]*))\s*\[\s*([A-Z_]*)$/i);
+    
+    if (insideBrackets) {
+      const tableName = (insideBrackets[1] || insideBrackets[2]).trim();
+      const columns = parsed.tables.get(tableName);
+      
+      if (columns) {
+        // Suggest columns from this specific table
+        for (const columnName of columns) {
+          completionItems.push({
+            label: columnName,
+            kind: vscode.CompletionItemKind.Field,
+            detail: `Column in ${tableName}`,
+            documentation: `Reference to the ${columnName} column in the ${tableName} table`,
+            sortText: '0_' + columnName, // Sort columns first
+            insertText: columnName,
+          });
+        }
+        // don't suggest anything other than column if inside bracket
+        return completionItems;
+      }
+    } else {
+      // User is inside an opening bracket [ for measures
+      const afterBracket = linePrefix.match(/\[\s*([A-Z_]*)$/i);
+      
+      if (afterBracket) {
+        // Suggest measures
+        for (const measureName of parsed.measures) {
+          completionItems.push({
+            label: measureName,
+            kind: vscode.CompletionItemKind.Value,
+            detail: 'Measure',
+            documentation: `Reference to the ${measureName} measure`,
+            sortText: '1_' + measureName,
+            insertText: measureName,
+          });
+        }
+        // don't suggest anything other than measure if inside bracket
+        return completionItems;
+      } else {
+        // Suggest table names
+        for (const tableName of parsed.tables.keys()) {
+          const needsQuotes = /\s/.test(tableName);
+          const displayName = needsQuotes ? `'${tableName}'` : tableName;
+
+          completionItems.push({
+            label: tableName,
+            kind: vscode.CompletionItemKind.Class,
+            detail: 'Table',
+            documentation: `Reference to the ${tableName} table`,
+            sortText: '2_' + tableName,
+            // Auto-insert brackets with cursor inside
+            insertText: new vscode.SnippetString(`${displayName}[\${1:column}]`),
+          });
+        }
+      }
     }
     
     // Add function completions

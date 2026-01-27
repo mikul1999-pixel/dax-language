@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
-const daxFunctions = require('./dax.functions.json');
-const daxKeywords = require('./dax.keywords.json');
+const daxFunctions = require('../dax.functions.json');
+const daxKeywords = require('../dax.keywords.json');
 
 export class DaxHoverProvider implements vscode.HoverProvider {
   

@@ -10,7 +10,7 @@ vscode extension to support syntax for DAX (Data Analysis Expressions) for Power
 ## Features
 
 - **Syntax Highlighting** - Color coding for DAX functions, keywords, operators, comments, and table/column references
-- **Autocomplete** - IntelliSense with DAX functions and keywords
+- **Autocomplete** - IntelliSense with DAX functions, keywords, and your (document-scoped) tables, columns, measures
 - **Hover Documentation** - View function descriptions, syntax, and return types on hover
 - **Parameter Syntax** - Auto-insert function signatures with parameter placeholders
 - **Snippets Library** - Auto-insert common DAX patterns from local library

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { DaxCompletionProvider } from './dax.provider.completion';
-import { DaxHoverProvider } from './dax.provider.hover';
+import { DaxCompletionProvider } from './provider/dax.provider.completion';
+import { DaxHoverProvider } from './provider/dax.provider.hover';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('DAX Language Syntax is now active');
