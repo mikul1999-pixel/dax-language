@@ -160,7 +160,7 @@ const grammar = {
           "end": "\\]",
           "patterns": [
             {
-              "name": "keyword.operator.column.dax",
+              "name": "constant.other.column.dax",
               "match": "[^\\]]+"
             }
           ]

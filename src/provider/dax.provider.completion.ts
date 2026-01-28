@@ -137,11 +137,11 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     
     if (insideBrackets) {
       const tableName = (insideBrackets[1] || insideBrackets[2]).trim();
-      const columns = parsed.tables.get(tableName);
-      
-      if (columns) {
-        // Suggest columns from this specific table
-        for (const columnName of columns) {
+      const tableInfo = parsed.tables.get(tableName);
+
+      if (tableInfo) {
+        // Suggest columns from this table
+        for (const columnName of tableInfo.columns) {
           completionItems.push({
             label: columnName,
             kind: vscode.CompletionItemKind.Field,
@@ -192,7 +192,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     }
 
     // Add variable completions
-    const variables = this.parser.parseVariables(document);
+    const variables = parsed.variables;
 
     for (const varInfo of variables) {
       // Only suggest variables declared before current position

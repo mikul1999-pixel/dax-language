@@ -3,7 +3,7 @@ import { DaxDocumentParser } from '../parser/dax.document.parser';
 
 export class DaxSemanticTokenProvider implements vscode.DocumentSemanticTokensProvider {
   
-  // Define the token types. built-in types: variable, parameter, function, etc.
+  // Define the token types for highlighting
   static readonly tokenTypes = ['variable', 'type'];
   static readonly tokenModifiers = ['declaration', 'readonly'];
   
@@ -21,45 +21,26 @@ export class DaxSemanticTokenProvider implements vscode.DocumentSemanticTokensPr
     
     const tokensBuilder = new vscode.SemanticTokensBuilder(DaxSemanticTokenProvider.legend);
     const parsed = this.parser.parse(document);
-
+    
     // Track table names
-    const tableNames = Array.from(parsed.tables.keys());
-    const text = document.getText();
-
-    // Helper to escape table names
-    function escapeRegex(text: string): string {
-        return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Collect all table usage ranges
+    const tableRanges: vscode.Range[] = [];
+    for (const tableInfo of parsed.tables.values()) {
+      tableRanges.push(...tableInfo.usageRanges);
     }
-
-    // Helper to prevent formatting columns
-    function isInsideBrackets(text: string, index: number): boolean {
-        const before = text.lastIndexOf("[", index);
-        const after = text.lastIndexOf("]", index);
-
-        return before > after;
-    }
-
-
-    for (const tableName of tableNames) {
-        const regex = new RegExp(`\\b${escapeRegex(tableName)}\\b`, 'g');
-
-        let match: RegExpExecArray | null;
-        while ((match = regex.exec(text)) !== null) {
-            const start = document.positionAt(match.index);
-            
-            // Skip if inside [ ] 
-            if (isInsideBrackets(text, match.index)) { 
-                continue; 
-            }
-
-            tokensBuilder.push(
-            start.line,
-            start.character,
-            match[0].length,
-            1, // token type index: 'type'
-            0  // no modifiers
-            );
-        }
+    
+    // Sort table ranges by position
+    tableRanges.sort((a, b) => a.start.compareTo(b.start));
+    
+    // Add tokens for table names
+    for (const range of tableRanges) {
+      tokensBuilder.push(
+        range.start.line,
+        range.start.character,
+        range.end.character - range.start.character,
+        1, // token type index: 'type'
+        0  // no modifiers
+      );
     }
 
     // Track variables
@@ -75,10 +56,10 @@ export class DaxSemanticTokenProvider implements vscode.DocumentSemanticTokensPr
       }
     }
 
-    // Sort by position
+    // Sort variable ranges by position
     allRanges.sort((a, b) => a.range.start.compareTo(b.range.start));
     
-    // Add tokens in order
+    // Add tokens for variables
     for (const { range, isDeclaration } of allRanges) {
       tokensBuilder.push(
         range.start.line,
