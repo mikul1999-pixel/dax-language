@@ -25,12 +25,6 @@ const functionPatterns = Object.entries(functionsByGroup).map(([group, names]) =
   match: `(?i)\\b(${sortByLength(names).map(escapeRegex).join('|')})\\s*(?=\\()`
 }));
 
-// Constant-like functions (TRUE/FALSE/BLANK)
-const constantFunctionPattern = {
-  name: "support.function.constant.dax",
-  match: "(?i)\\b(TRUE|FALSE|BLANK)\\s*(?=\\()"
-};
-
 // Keywords
 const defineKeywordsList = daxKeywords
   .filter(k => k.kind === 'definition')
@@ -190,7 +184,6 @@ const grammar = {
     },
     "functions": {
       "patterns": [
-        constantFunctionPattern,
         ...functionPatterns
       ]
     },

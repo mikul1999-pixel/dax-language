@@ -163,10 +163,6 @@
     "functions": {
       "patterns": [
         {
-          "name": "support.function.constant.dax",
-          "match": "(?i)\\b(TRUE|FALSE|BLANK)\\s*(?=\\()"
-        },
-        {
           "name": "support.function.math.dax",
           "match": "(?i)\\b(RANDBETWEEN|ROUNDDOWN|CURRENCY|QUOTIENT|CEILING|RADIANS|ROUNDUP|DIVIDE|ISEVEN|ACOSH|ACOTH|ASINH|ATANH|FLOOR|ISODD|LOG10|POWER|ROUND|TRUNC|ACOS|ACOT|ASIN|ATAN|FACT|RAND|SIGN|SQRT|ABS|EXP|INT|LOG|MOD|SIN|LN)\\s*(?=\\()"
         },
