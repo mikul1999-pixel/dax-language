@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { DaxDocumentParser } from '../parser/dax.document.parser';
+import { SymbolKind } from '../symbol/dax.symbol.table';
 
 export class DaxSemanticTokenProvider implements vscode.DocumentSemanticTokensProvider {
   
@@ -25,8 +26,8 @@ export class DaxSemanticTokenProvider implements vscode.DocumentSemanticTokensPr
     // Track table names
     // Collect all table usage ranges
     const tableRanges: vscode.Range[] = [];
-    for (const tableInfo of parsed.tables.values()) {
-      tableRanges.push(...tableInfo.usageRanges);
+    for (const symbol of this.parser.getSymbolTable().getSymbolsByKind(SymbolKind.Table)) {
+      tableRanges.push(...symbol.referenceRanges);
     }
     
     // Sort table ranges by position

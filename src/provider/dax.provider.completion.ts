@@ -119,40 +119,40 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
         // don't suggest anything other than column if inside bracket
         return completionItems;
       }
-    } else {
-      // User is inside an opening bracket [ for measures
-      const afterBracket = linePrefix.match(/\[\s*([A-Z_]*)$/i);
-      
-      if (afterBracket) {
-        // Suggest measures
-        for (const measureName of parsed.measures.keys()) {
-          completionItems.push({
-            label: measureName,
-            kind: vscode.CompletionItemKind.Value,
-            detail: 'Measure',
-            documentation: `Reference to the ${measureName} measure`,
-            sortText: '1_' + measureName,
-            insertText: measureName,
-          });
-        }
-        // don't suggest anything other than measure if inside bracket
-        return completionItems;
-      } else {
-        // Suggest table names
-        for (const tableName of parsed.tables.keys()) {
-          const needsQuotes = /\s/.test(tableName);
-          const displayName = needsQuotes ? `'${tableName}'` : tableName;
+    }
 
-          completionItems.push({
-            label: tableName,
-            kind: vscode.CompletionItemKind.Class,
-            detail: 'Table',
-            documentation: `Reference to the ${tableName} table`,
-            sortText: '2_' + tableName,
-            // Auto-insert brackets with cursor inside
-            insertText: new vscode.SnippetString(`${displayName}[\${1:column}]`),
-          });
-        }
+    // User is inside an opening bracket [ for measures
+    const afterBracket = linePrefix.match(/\[\s*([A-Z_]*)$/i);
+    
+    if (afterBracket) {
+      // Suggest measures
+      for (const measureName of parsed.measures.keys()) {
+        completionItems.push({
+          label: measureName,
+          kind: vscode.CompletionItemKind.Value,
+          detail: 'Measure',
+          documentation: `Reference to the ${measureName} measure`,
+          sortText: '1_' + measureName,
+          insertText: measureName,
+        });
+      }
+      // don't suggest anything other than measure if inside bracket
+      return completionItems;
+    } else {
+      // Suggest table names
+      for (const tableName of parsed.tables.keys()) {
+        const needsQuotes = /\s/.test(tableName);
+        const displayName = needsQuotes ? `'${tableName}'` : tableName;
+
+        completionItems.push({
+          label: tableName,
+          kind: vscode.CompletionItemKind.Class,
+          detail: 'Table',
+          documentation: `Reference to the ${tableName} table`,
+          sortText: '2_' + tableName,
+          // Auto-insert brackets with cursor inside
+          insertText: new vscode.SnippetString(`${displayName}[\${1:column}]`),
+        });
       }
     }
 

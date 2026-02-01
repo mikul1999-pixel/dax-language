@@ -211,7 +211,7 @@ const grammar = {
     "table-column-references": {
       "patterns": [
         {
-          "begin": "(\\b\\w+|'[^']+')\\s*\\[",
+          "begin": "(\\b\\w+|'[^']+')\\[",
           "end": "\\]",
           "beginCaptures": {
             "1": {

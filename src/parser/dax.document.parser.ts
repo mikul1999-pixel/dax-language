@@ -140,7 +140,7 @@ export class DaxDocumentParser {
     
     // Pattern: TableName[ColumnName] or 'Table Name'[ColumnName]
     // 1: quoted table name, 2: unquoted table name, 3: column name
-    const pattern = /(?:'([^']+)'|(\b[A-Z_][A-Z0-9_]*))\s*\[\s*([^\]]+)\s*\]/gi;
+    const pattern = /(?:'([^']+)'|(\b[A-Z_][A-Z0-9_]*))\[\s*([^\]]+)\s*\]/gi;
     
     let match;
     while ((match = pattern.exec(text)) !== null) {
@@ -239,6 +239,15 @@ export class DaxDocumentParser {
           continue;
         }
 
+        // Skip if followed by ( (function call) or = measure declaration
+        let nextNonWhitespace = match.index + match[0].length;
+        while (nextNonWhitespace < text.length && /\s/.test(text[nextNonWhitespace])) {
+          nextNonWhitespace++;
+        }
+        if (nextNonWhitespace < text.length && (text[nextNonWhitespace] === '(' || text[nextNonWhitespace] === '=')) {
+          continue;
+        }
+
         if (!addedPositions.has(posKey)) {
           tableInfo.usageRanges.push(new vscode.Range(startPos, endPos));
           addedPositions.add(posKey);
@@ -302,7 +311,7 @@ export class DaxDocumentParser {
     }
     
     // Pattern 2: MEASURE Table[MeasureName] = expression
-    const defPattern2 = /\bMEASURE\s+(?:'([^']+)'|([A-Z_][A-Z0-9_]*))\s*\[\s*([^\]]+)\s*\]\s*=/gi;
+    const defPattern2 = /\bMEASURE\s+(?:'([^']+)'|([A-Z_][A-Z0-9_]*))\[\s*([^\]]+)\s*\]\s*=/gi;
     
     while ((match = defPattern2.exec(text)) !== null) {
       if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
@@ -358,7 +367,12 @@ export class DaxDocumentParser {
         continue; // Part of 'Table'[Column]
       }
       
-      if (beforeBracket >= 0 && /[A-Z0-9_]/i.test(text[beforeBracket])) {
+      if (
+        beforeBracket >= 0 &&
+        /[A-Z0-9_]/i.test(text[beforeBracket]) &&
+        // ensure no whitespace between identifier and '['
+        match.index === beforeBracket + 1
+      ) {
         continue; // Part of Table[Column]
       }
       
