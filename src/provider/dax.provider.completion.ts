@@ -8,43 +8,8 @@ const daxSnippets = require('../dax.snippets.json');
 export class DaxCompletionProvider implements vscode.CompletionItemProvider {
   private currentDecoration?: vscode.TextEditorDecorationType;
   private currentEditor?: vscode.TextEditor;
-  private cache = new Map<string, TableColumnMap>();
-  private parseTimeout?: NodeJS.Timeout;
 
   constructor(private parser: DaxDocumentParser) {
-    // Invalidate cache when document changes
-    vscode.workspace.onDidChangeTextDocument(event => {
-      if (event.document.languageId !== 'dax') {
-        return;
-      }
-      
-      // Debounce: wait 300ms after last keystroke
-      clearTimeout(this.parseTimeout);
-      this.parseTimeout = setTimeout(() => {
-        this.invalidateCache(event.document.uri);
-      }, 300);
-    });
-    
-    // Clear cache when document closes
-    vscode.workspace.onDidCloseTextDocument(document => {
-      this.invalidateCache(document.uri);
-    });
-  }
-  
-  private invalidateCache(uri: vscode.Uri): void {
-    this.cache.delete(uri.toString());
-  }
-  
-  private getParsedDocument(document: vscode.TextDocument): TableColumnMap {
-    const key = document.uri.toString();
-    
-    if (this.cache.has(key)) {
-      return this.cache.get(key)!;
-    }
-    
-    const parsed = this.parser.parse(document);
-    this.cache.set(key, parsed);
-    return parsed;
   }
   
   provideCompletionItems(
@@ -57,7 +22,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
     const linePrefix = document.lineAt(position).text.substring(0, position.character);
     const isDaxSnippetTrigger = linePrefix.toLowerCase().includes('dax:');
     const completionItems: vscode.CompletionItem[] = [];
-    const parsed = this.getParsedDocument(document);
+    const parsed = this.parser.parse(document);
 
     // parse tricky snippet options once. only through SnippetString, not json-->TS + SnippetString
     const SNIPPET_OPTIONS_MAP: Record<string, string[]> = {
@@ -160,7 +125,7 @@ export class DaxCompletionProvider implements vscode.CompletionItemProvider {
       
       if (afterBracket) {
         // Suggest measures
-        for (const measureName of parsed.measures) {
+        for (const measureName of parsed.measures.keys()) {
           completionItems.push({
             label: measureName,
             kind: vscode.CompletionItemKind.Value,

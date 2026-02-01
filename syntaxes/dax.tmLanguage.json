@@ -4,28 +4,44 @@
   "scopeName": "source.dax",
   "patterns": [
     {
-      "include": "#comments"
+      "include": "#define-keywords"
     },
     {
-      "include": "#strings"
-    },
-    {
-      "include": "#numbers"
-    },
-    {
-      "include": "#keywords"
-    },
-    {
-      "include": "#operators"
-    },
-    {
-      "include": "#functions"
-    },
-    {
-      "include": "#table-column-references"
+      "include": "#core-includes"
     }
   ],
   "repository": {
+    "core-includes": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#variable-declarations"
+        },
+        {
+          "include": "#datatype-keywords"
+        },
+        {
+          "include": "#other-keywords"
+        },
+        {
+          "include": "#operators"
+        },
+        {
+          "include": "#functions"
+        },
+        {
+          "include": "#table-column-references"
+        }
+      ]
+    },
     "comments": {
       "patterns": [
         {
@@ -66,15 +82,49 @@
         }
       ]
     },
-    "keywords": {
+    "define-keywords": {
+      "begin": "\\bDEFINE\\b",
+      "beginCaptures": {
+        "0": {
+          "name": "keyword.control.define.dax"
+        }
+      },
+      "end": "\\bEVALUATE\\b",
+      "endCaptures": {
+        "0": {
+          "name": "keyword.control.evaluate.dax"
+        }
+      },
+      "patterns": [
+        {
+          "match": "(?i)^\\s*\\b(MEASURE|COLUMN|TABLE)\\b",
+          "name": "keyword.definition.dax"
+        },
+        {
+          "include": "#core-includes"
+        }
+      ]
+    },
+    "datatype-keywords": {
+      "begin": "\\bDATATABLE\\s*\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "support.function.datatable.dax"
+        }
+      },
+      "end": "\\)",
+      "patterns": [
+        {
+          "match": "(?i)\\b(DATETIME|CURRENCY|INTEGER|BOOLEAN|STRING|DOUBLE)\\b",
+          "name": "storage.type.datatable.dax"
+        }
+      ]
+    },
+    "other-keywords": {
       "patterns": [
         {
           "name": "keyword.control.dax",
           "match": "(?i)\\b(PARTITION\\s+BY|ORDER\\s+BY|START\\s+AT|EVALUATE|MATCHBY|RETURN|DEFINE|DESC|VAR|ASC)\\b"
-        },
-        {
-          "name": "keyword.operator.type.dax",
-          "match": "(?i)\\b(DATETIME|CURRENCY|MEASURE|INTEGER|BOOLEAN|COLUMN|STRING|DOUBLE|TABLE)\\b"
         }
       ]
     },
@@ -170,11 +220,43 @@
         }
       ]
     },
+    "variable-declarations": {
+      "match": "(?i)\\b(var)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(=)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.var.dax"
+        },
+        "2": {
+          "name": "variable.other.constant.declaration.dax"
+        },
+        "3": {
+          "name": "keyword.operator.assignment.dax"
+        }
+      }
+    },
     "table-column-references": {
       "patterns": [
         {
           "begin": "(\\b\\w+|'[^']+')\\s*\\[",
           "end": "\\]",
+          "beginCaptures": {
+            "1": {
+              "patterns": [
+                {
+                  "match": "'([^']+)'",
+                  "captures": {
+                    "1": {
+                      "name": "entity.name.type.table.dax"
+                    }
+                  }
+                },
+                {
+                  "match": "\\b\\w+",
+                  "name": "entity.name.type.table.dax"
+                }
+              ]
+            }
+          },
           "patterns": [
             {
               "name": "constant.other.column.dax",

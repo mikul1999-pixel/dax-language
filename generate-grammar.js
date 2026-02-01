@@ -32,8 +32,12 @@ const constantFunctionPattern = {
 };
 
 // Keywords
+const defineKeywordsList = daxKeywords
+  .filter(k => k.kind === 'definition')
+  .map(k => k.name);
+
 const typeKeywordsList = daxKeywords
-  .filter(k => k.kind === 'dataType' || k.kind === 'definition')
+  .filter(k => k.kind === 'dataType')
   .map(k => k.name);
 
 const wordOperatorsList = daxKeywords
@@ -43,7 +47,9 @@ const wordOperatorsList = daxKeywords
 const rawKeywords = daxKeywords.map(k => k.name.replace(/ /g, '\\s+'));
 
 const typeKeywords = rawKeywords.filter(k => typeKeywordsList.includes(k.toUpperCase()));
+const defineKeywords = rawKeywords.filter(k => defineKeywordsList.includes(k.toUpperCase()));
 const controlKeywords = rawKeywords.filter(k =>
+  !defineKeywords.includes(k.toUpperCase()) &&
   !typeKeywordsList.includes(k.toUpperCase()) &&
   !wordOperatorsList.includes(k.toUpperCase())
 );
@@ -54,15 +60,24 @@ const grammar = {
   "name": "DAX",
   "scopeName": "source.dax",
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#keywords" },
-    { "include": "#operators" },
-    { "include": "#functions" },
-    { "include": "#table-column-references" }
+    { "include": "#define-keywords" },
+    { "include": "#core-includes" }
   ],
   "repository": {
+    "core-includes": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        { "include": "#numbers" },
+        { "include": "#variable-declarations" },
+        // { "include": "#define-keywords" },
+        { "include": "#datatype-keywords" },
+        { "include": "#other-keywords" },
+        { "include": "#operators" },
+        { "include": "#functions" },
+        { "include": "#table-column-references" }
+      ]
+    },
     "comments": {
       "patterns": [
         {
@@ -103,15 +118,41 @@ const grammar = {
         }
       ]
     },
-    "keywords": {
+    "define-keywords": {
+      "begin": "\\bDEFINE\\b",
+      "beginCaptures": {
+        "0": { "name": "keyword.control.define.dax" }
+      },
+      "end": "\\bEVALUATE\\b",
+      "endCaptures": {
+        "0": { "name": "keyword.control.evaluate.dax" }
+      },
+      "patterns": [
+        {
+          "match": `(?i)^\\s*\\b(${sortByLength(defineKeywords).join('|')})\\b`,
+          "name": "keyword.definition.dax"
+        },
+        { "include": "#core-includes" }
+      ]
+    },
+    "datatype-keywords": {
+      "begin": "\\bDATATABLE\\s*\\(",
+      "beginCaptures": {
+        "0": { "name": "support.function.datatable.dax" }
+      },
+      "end": "\\)",
+      "patterns": [
+        {
+          "match": `(?i)\\b(${sortByLength(typeKeywords).join('|')})\\b`,
+          "name": "storage.type.datatable.dax"
+        }
+      ]
+    },
+    "other-keywords": {
       "patterns": [
         {
           "name": "keyword.control.dax",
           "match": `(?i)\\b(${sortByLength(controlKeywords).join('|')})\\b`
-        },
-        {
-          "name": "keyword.operator.type.dax",
-          "match": `(?i)\\b(${sortByLength(typeKeywords).join('|')})\\b`
         }
       ]
     },
@@ -153,11 +194,41 @@ const grammar = {
         ...functionPatterns
       ]
     },
+    "variable-declarations": {
+      "match": "(?i)\\b(var)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(=)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.var.dax"
+        },
+        "2": {
+          "name": "variable.other.constant.declaration.dax"
+        },
+        "3": {
+          "name": "keyword.operator.assignment.dax"
+        }
+      }
+    },
     "table-column-references": {
       "patterns": [
         {
           "begin": "(\\b\\w+|'[^']+')\\s*\\[",
           "end": "\\]",
+          "beginCaptures": {
+            "1": {
+              "patterns": [
+                {
+                  "match": "'([^']+)'",
+                  "captures": {
+                    "1": { "name": "entity.name.type.table.dax" }
+                  }
+                },
+                {
+                  "match": "\\b\\w+",
+                  "name": "entity.name.type.table.dax"
+                }
+              ]
+            }
+          },
           "patterns": [
             {
               "name": "constant.other.column.dax",

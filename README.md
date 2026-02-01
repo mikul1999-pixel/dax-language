@@ -1,4 +1,4 @@
-# DAX Language Syntax
+# DAX Language Support
 
 _***my personal version**_
 

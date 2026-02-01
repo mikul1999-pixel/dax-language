@@ -8,13 +8,13 @@ package: build
 	npx @vscode/vsce package
 
 install: package
-	code --install-extension dax-language-syntax-m99-0.1.0.vsix
+	code --install-extension dax-language-vscode-0.1.0.vsix
 
 update:
 	git pull
 	npm install
 	npx @vscode/vsce package
-	code --install-extension dax-language-syntax-m99-0.1.0.vsix --force
+	code --install-extension dax-language-vscode-0.1.0.vsix --force
 
 uninstall:
-	code --uninstall-extension dax-language-syntax-m99
+	code --uninstall-extension dax-language-vscode

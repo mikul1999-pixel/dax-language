@@ -1,12 +1,12 @@
 {
-  "name": "dax-language-syntax-m99",
-  "displayName": "DAX Language Syntax vM99",
-  "description": "DAX language support for Power BI",
+  "name": "dax-language-vscode",
+  "displayName": "dax-for-vscode",
+  "description": "DAX language support for vscode",
   "version": "0.1.0",
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mikul1999-pixel/dax-language-syntax-m99.git"
+    "url": "https://github.com/mikul1999-pixel/dax-language.git"
   },
   "engines": {
     "vscode": "^1.85.0"
