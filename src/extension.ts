@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { DaxCompletionProvider } from './provider/dax.provider.completion';
 import { DaxHoverProvider } from './provider/dax.provider.hover';
+import { DaxSignatureHelpProvider } from './provider/dax.provider.signature';
 import { DaxDocumentParser } from './parser/dax.document.parser';
 import { DaxSemanticTokenProvider } from './provider/dax.provider.token';
 import { DaxDefinitionProvider } from './provider/dax.provider.definition';
@@ -28,6 +29,13 @@ export function activate(context: vscode.ExtensionContext) {
     new DaxHoverProvider(parser)
   );
 
+  // Register signature provider
+  const sigProvider = vscode.languages.registerSignatureHelpProvider(
+    daxSelector,
+    new DaxSignatureHelpProvider(),
+    '(', ','
+  );
+
   // Register the semantic token provider
   const semanticTokenProvider = vscode.languages.registerDocumentSemanticTokensProvider(
     daxSelector,
@@ -52,30 +60,15 @@ export function activate(context: vscode.ExtensionContext) {
     daxSelector,
     new DaxRenameProvider(parser)
   );
-
-  // Register expand parameters command
-  const expandParameterCmd = vscode.commands.registerCommand('dax.expandParameters', 
-    () => {
-      completionClass.expandParameters();
-    }
-  );
-
-  // Register parameter hint command
-  const showParameterCmd = vscode.commands.registerCommand('dax.showParameterHint', 
-    (syntax: string, functionName: string) => {
-      completionClass.showParameterHint(syntax, functionName);
-    }
-  );
   
   context.subscriptions.push(
     completionProvider, 
+    sigProvider, 
     hoverProvider, 
     semanticTokenProvider,
     definitionProvider,
     referenceProvider,
-    renameProvider,
-    expandParameterCmd,
-    showParameterCmd
+    renameProvider
   );
 
 }

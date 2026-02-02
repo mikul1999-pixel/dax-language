@@ -19,11 +19,6 @@
     "configuration": {
       "title": "DAX",
       "properties": {
-        "dax.showParameterHints": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show inline parameter hints after completing a function"
-        }
       }
     },
     "languages": [
@@ -47,11 +42,6 @@
       }
     ],
     "keybindings": [
-      {
-        "command": "dax.expandParameters",
-        "key": "shift+enter",
-        "when": "editorTextFocus && editorLangId == dax"
-      }
     ]
   },
   "scripts": {

@@ -75,7 +75,7 @@ export class DaxHoverProvider implements vscode.HoverProvider {
         const markdown = new vscode.MarkdownString();
         markdown.isTrusted = true;
         markdown.appendCodeblock(`${functionInfo.syntax} -> ${functionInfo.returns}`, 'dax');
-        markdown.appendMarkdown(`\n*function* · ${functionInfo.group}\n\n`);
+        markdown.appendMarkdown(`\n*function* · *${functionInfo.group}*\n\n`);
         markdown.appendMarkdown(`${functionInfo.description}\n\n`);
         return new vscode.Hover(markdown);
       }
@@ -87,7 +87,7 @@ export class DaxHoverProvider implements vscode.HoverProvider {
       const markdown = new vscode.MarkdownString();
       markdown.isTrusted = true;
       markdown.appendCodeblock(`${keywordInfo.syntax}`, 'dax');
-      markdown.appendMarkdown(`\n*keyword* · ${keywordInfo.kind}\n\n`);
+      markdown.appendMarkdown(`\n*keyword* · *${keywordInfo.kind}*\n\n`);
       markdown.appendMarkdown(`${keywordInfo.description}\n\n`);
       return new vscode.Hover(markdown);
     }

@@ -1,0 +1,1395 @@
+[
+  {
+    "name": "ABS",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ACOS",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ACOSH",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ACOT",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ACOTH",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ADDCOLUMNS",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "name", "type": "String", "isOptional": false, "isRepeatable": true},
+      {"name": "expression", "type": "Any", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "ADDMISSINGITEMS",
+    "parameters": [
+      {"name": "showAll_columnName", "type": "Column", "isOptional": false, "isRepeatable": true},
+      {"name": "table", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ALL",
+    "parameters": [
+      {"name": "tableOrColumn", "type": "Table|Column", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "ALLCROSSFILTERED",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ALLEXCEPT",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "column", "type": "Column", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "ALLNOBLANKROW",
+    "parameters": [
+      {"name": "tableOrColumn", "type": "Table|Column", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "ALLSELECTED",
+    "parameters": [
+      {"name": "tableOrColumn", "type": "Table|Column", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "AND",
+    "parameters": [
+      {"name": "logical1", "type": "Boolean", "isOptional": false},
+      {"name": "logical2", "type": "Boolean", "isOptional": false}
+    ]
+  },
+  {
+    "name": "APPROXIMATEDISTINCTCOUNT",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ASIN",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ASINH",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ATAN",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ATANH",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "AVERAGE",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "AVERAGEA",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "AVERAGEX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "BLANK",
+    "parameters": []
+  },
+  {
+    "name": "CALCULATE",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false},
+      {"name": "filter", "type": "Boolean|Table", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "CALCULATETABLE",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "filter", "type": "Boolean|Table", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "CALENDAR",
+    "parameters": [
+      {"name": "start_date", "type": "DateTime", "isOptional": false},
+      {"name": "end_date", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "CALENDARAUTO",
+    "parameters": [
+      {"name": "fiscal_year_end_month", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "CEILING",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "significance", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "COALESCE",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "COMBINEVALUES",
+    "parameters": [
+      {"name": "delimiter", "type": "String", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "CONCATENATE",
+    "parameters": [
+      {"name": "text1", "type": "String", "isOptional": false},
+      {"name": "text2", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "CONCATENATEX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false},
+      {"name": "delimiter", "type": "String", "isOptional": true},
+      {"name": "orderBy_expression", "type": "Any", "isOptional": true, "isRepeatable": true},
+      {"name": "order", "type": "Integer", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "CONTAINS",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "columnName", "type": "Column", "isOptional": false, "isRepeatable": true},
+      {"name": "value", "type": "Any", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "CONTAINSROW",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "value", "type": "Any", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "CONTAINSSTRING",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false},
+      {"name": "substring", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "COUNT",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "COUNTA",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "COUNTAX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "COUNTBLANK",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "COUNTROWS",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": true}
+    ]
+  },
+  {
+    "name": "COUNTX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "CROSSFILTER",
+    "parameters": [
+      {"name": "columnName1", "type": "Column", "isOptional": false},
+      {"name": "columnName2", "type": "Column", "isOptional": false},
+      {"name": "direction", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "CROSSJOIN",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "CURRENCY",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "CURRENTGROUP",
+    "parameters": []
+  },
+  {
+    "name": "CUSTOMDATA",
+    "parameters": []
+  },
+  {
+    "name": "DATATABLE",
+    "parameters": [
+      {"name": "Name", "type": "String", "isOptional": false, "isRepeatable": true},
+      {"name": "DataType", "type": "Type", "isOptional": false, "isRepeatable": true},
+      {"name": "Data", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATE",
+    "parameters": [
+      {"name": "year", "type": "Integer", "isOptional": false},
+      {"name": "month", "type": "Integer", "isOptional": false},
+      {"name": "day", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATEADD",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "number_of_intervals", "type": "Integer", "isOptional": false},
+      {"name": "interval", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATEDIFF",
+    "parameters": [
+      {"name": "date1", "type": "DateTime", "isOptional": false},
+      {"name": "date2", "type": "DateTime", "isOptional": false},
+      {"name": "interval", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATESBETWEEN",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "start_date", "type": "DateTime", "isOptional": false},
+      {"name": "end_date", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATESINPERIOD",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "start_date", "type": "DateTime", "isOptional": false},
+      {"name": "number_of_intervals", "type": "Integer", "isOptional": false},
+      {"name": "interval", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATESMTD",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATESQTD",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DATESYTD",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "year_end_date", "type": "String", "isOptional": true}
+    ]
+  },
+  {
+    "name": "DATEVALUE",
+    "parameters": [
+      {"name": "date_text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DAY",
+    "parameters": [
+      {"name": "date", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DISTINCT",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DISTINCTCOUNT",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "DIVIDE",
+    "parameters": [
+      {"name": "numerator", "type": "Decimal", "isOptional": false},
+      {"name": "denominator", "type": "Decimal", "isOptional": false},
+      {"name": "alternateresult", "type": "Decimal", "isOptional": true}
+    ]
+  },
+  {
+    "name": "EARLIER",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false},
+      {"name": "num", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "EARLIEST",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "EDATE",
+    "parameters": [
+      {"name": "start_date", "type": "DateTime", "isOptional": false},
+      {"name": "months", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ENDOFMONTH",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ENDOFQUARTER",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ENDOFYEAR",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "year_end_date", "type": "String", "isOptional": true}
+    ]
+  },
+  {
+    "name": "EOMONTH",
+    "parameters": [
+      {"name": "start_date", "type": "DateTime", "isOptional": false},
+      {"name": "months", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ERROR",
+    "parameters": [
+      {"name": "error_text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "EXACT",
+    "parameters": [
+      {"name": "text1", "type": "String", "isOptional": false},
+      {"name": "text2", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "EXCEPT",
+    "parameters": [
+      {"name": "table1", "type": "Table", "isOptional": false},
+      {"name": "table2", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "EXP",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FACT",
+    "parameters": [
+      {"name": "number", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FALSE",
+    "parameters": []
+  },
+  {
+    "name": "FILTER",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "filter", "type": "Boolean", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FILTERS",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FIND",
+    "parameters": [
+      {"name": "find_text", "type": "String", "isOptional": false},
+      {"name": "within_text", "type": "String", "isOptional": false},
+      {"name": "start_num", "type": "Integer", "isOptional": true},
+      {"name": "NotFoundValue", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "FIRSTDATE",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FIRSTNONBLANK",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FIRSTNONBLANKVALUE",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FIXED",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "decimals", "type": "Integer", "isOptional": false},
+      {"name": "no_commas", "type": "Boolean", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FLOOR",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "significance", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "FORMAT",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false},
+      {"name": "format_string", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "GENERATE",
+    "parameters": [
+      {"name": "table1", "type": "Table", "isOptional": false},
+      {"name": "table2", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "GENERATEALL",
+    "parameters": [
+      {"name": "table1", "type": "Table", "isOptional": false},
+      {"name": "table2", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "GENERATESERIES",
+    "parameters": [
+      {"name": "start", "type": "Decimal", "isOptional": false},
+      {"name": "end", "type": "Decimal", "isOptional": false},
+      {"name": "increment", "type": "Decimal", "isOptional": true}
+    ]
+  },
+  {
+    "name": "GROUPBY",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "groupBy_columnName", "type": "Column", "isOptional": true, "isRepeatable": true},
+      {"name": "name", "type": "String", "isOptional": true, "isRepeatable": true},
+      {"name": "expression", "type": "Any", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "HASONEFILTER",
+    "parameters": [
+      {"name": "columnName", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "HASONEVALUE",
+    "parameters": [
+      {"name": "columnName", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "HOUR",
+    "parameters": [
+      {"name": "datetime", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "IF",
+    "parameters": [
+      {"name": "logical_test", "type": "Boolean", "isOptional": false},
+      {"name": "value_if_true", "type": "Any", "isOptional": false},
+      {"name": "value_if_false", "type": "Any", "isOptional": true}
+    ]
+  },
+  {
+    "name": "IFERROR",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false},
+      {"name": "value_if_error", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "IGNORE",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "INT",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "INTERSECT",
+    "parameters": [
+      {"name": "table1", "type": "Table", "isOptional": false},
+      {"name": "table2", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISBLANK",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISCROSSFILTERED",
+    "parameters": [
+      {"name": "columnName", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISEMPTY",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISERROR",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISEVEN",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISFILTERED",
+    "parameters": [
+      {"name": "columnName", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISINSCOPE",
+    "parameters": [
+      {"name": "columnName", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISLOGICAL",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISNONTEXT",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISNUMBER",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISODD",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ISTEXT",
+    "parameters": [
+      {"name": "value", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "KEEPFILTERS",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LASTDATE",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LASTNONBLANK",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LASTNONBLANKVALUE",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LEFT",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false},
+      {"name": "num_chars", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LEN",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LN",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LOG",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "base", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LOG10",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "LOOKUPVALUE",
+    "parameters": [
+      {"name": "result_columnName", "type": "Column", "isOptional": false},
+      {"name": "search_columnName", "type": "Column", "isOptional": false, "isRepeatable": true},
+      {"name": "search_value", "type": "Any", "isOptional": false, "isRepeatable": true},
+      {"name": "alternateResult", "type": "Any", "isOptional": true}
+    ]
+  },
+  {
+    "name": "LOWER",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MAX",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MAXA",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MAXX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MEDIAN",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MEDIANX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MID",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false},
+      {"name": "start_num", "type": "Integer", "isOptional": false},
+      {"name": "num_chars", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MIN",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MINA",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MINUTE",
+    "parameters": [
+      {"name": "datetime", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MINX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MOD",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "divisor", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "MONTH",
+    "parameters": [
+      {"name": "datetime", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "NATURALINNERJOIN",
+    "parameters": [
+      {"name": "table1", "type": "Table", "isOptional": false},
+      {"name": "table2", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "NATURALLEFTOUTERJOIN",
+    "parameters": [
+      {"name": "table1", "type": "Table", "isOptional": false},
+      {"name": "table2", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "NEXTDAY",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "NEXTMONTH",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "NEXTQUARTER",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "NEXTYEAR",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "year_end_date", "type": "String", "isOptional": true}
+    ]
+  },
+  {
+    "name": "NOT",
+    "parameters": [
+      {"name": "logical", "type": "Boolean", "isOptional": false}
+    ]
+  },
+  {
+    "name": "NOW",
+    "parameters": []
+  },
+  {
+    "name": "OR",
+    "parameters": [
+      {"name": "logical1", "type": "Boolean", "isOptional": false},
+      {"name": "logical2", "type": "Boolean", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PARALLELPERIOD",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "number_of_intervals", "type": "Integer", "isOptional": false},
+      {"name": "interval", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PATH",
+    "parameters": [
+      {"name": "ID_columnName", "type": "Column", "isOptional": false},
+      {"name": "parent_columnName", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PATHCONTAINS",
+    "parameters": [
+      {"name": "path", "type": "String", "isOptional": false},
+      {"name": "item", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PATHITEM",
+    "parameters": [
+      {"name": "path", "type": "String", "isOptional": false},
+      {"name": "position", "type": "Integer", "isOptional": false},
+      {"name": "type", "type": "Type", "isOptional": true}
+    ]
+  },
+  {
+    "name": "PATHITEMREVERSE",
+    "parameters": [
+      {"name": "path", "type": "String", "isOptional": false},
+      {"name": "position", "type": "Integer", "isOptional": false},
+      {"name": "type", "type": "Type", "isOptional": true}
+    ]
+  },
+  {
+    "name": "PATHLENGTH",
+    "parameters": [
+      {"name": "path", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "POWER",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "power", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PREVIOUSDAY",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PREVIOUSMONTH",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PREVIOUSQUARTER",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PREVIOUSYEAR",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "year_end_date", "type": "String", "isOptional": true}
+    ]
+  },
+  {
+    "name": "PRODUCT",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "PRODUCTX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "QUARTER",
+    "parameters": [
+      {"name": "date", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "QUOTIENT",
+    "parameters": [
+      {"name": "numerator", "type": "Decimal", "isOptional": false},
+      {"name": "denominator", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "RADIANS",
+    "parameters": [
+      {"name": "angle", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "RAND",
+    "parameters": []
+  },
+  {
+    "name": "RANDBETWEEN",
+    "parameters": [
+      {"name": "bottom", "type": "Integer", "isOptional": false},
+      {"name": "top", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "RANKX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false},
+      {"name": "value", "type": "Any", "isOptional": true},
+      {"name": "order", "type": "Integer", "isOptional": true},
+      {"name": "ties", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "RELATED",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "RELATEDTABLE",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false}
+    ]
+  },
+  {
+    "name": "REMOVEFILTERS",
+    "parameters": [
+      {"name": "tableOrColumn", "type": "Table|Column", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "REPLACE",
+    "parameters": [
+      {"name": "old_text", "type": "String", "isOptional": false},
+      {"name": "start_num", "type": "Integer", "isOptional": false},
+      {"name": "num_chars", "type": "Integer", "isOptional": false},
+      {"name": "new_text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "REPT",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false},
+      {"name": "num_times", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "RIGHT",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false},
+      {"name": "num_chars", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ROUND",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "num_digits", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ROUNDDOWN",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "num_digits", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ROUNDUP",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "num_digits", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "ROW",
+    "parameters": [
+      {"name": "n", "type": "String", "isOptional": false, "isRepeatable": true},
+      {"name": "expression", "type": "Any", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "SAMEPERIODLASTYEAR",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "SEARCH",
+    "parameters": [
+      {"name": "find_text", "type": "String", "isOptional": false},
+      {"name": "within_text", "type": "String", "isOptional": false},
+      {"name": "start_num", "type": "Integer", "isOptional": true},
+      {"name": "NotFoundValue", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "SECOND",
+    "parameters": [
+      {"name": "datetime", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "SELECTCOLUMNS",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "n", "type": "String", "isOptional": false, "isRepeatable": true},
+      {"name": "expression", "type": "Any", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "SELECTEDVALUE",
+    "parameters": [
+      {"name": "columnName", "type": "Column", "isOptional": false},
+      {"name": "alternateResult", "type": "Any", "isOptional": true}
+    ]
+  },
+  {
+    "name": "SIGN",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "SIN",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "SQRT",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false}
+    ]
+  },
+  {
+    "name": "STARTOFMONTH",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "STARTOFQUARTER",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "STARTOFYEAR",
+    "parameters": [
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "year_end_date", "type": "String", "isOptional": true}
+    ]
+  },
+  {
+    "name": "SUBSTITUTE",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false},
+      {"name": "old_text", "type": "String", "isOptional": false},
+      {"name": "new_text", "type": "String", "isOptional": false},
+      {"name": "instance_num", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "SUM",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "SUMMARIZE",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "groupBy_columnName", "type": "Column", "isOptional": true, "isRepeatable": true},
+      {"name": "n", "type": "String", "isOptional": true, "isRepeatable": true},
+      {"name": "expression", "type": "Any", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "SUMMARIZECOLUMNS",
+    "parameters": [
+      {"name": "groupBy_columnName", "type": "Column", "isOptional": true, "isRepeatable": true},
+      {"name": "filterTable", "type": "Table", "isOptional": true, "isRepeatable": true},
+      {"name": "n", "type": "String", "isOptional": true, "isRepeatable": true},
+      {"name": "expression", "type": "Any", "isOptional": true, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "SUMX",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "SWITCH",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false},
+      {"name": "value", "type": "Any", "isOptional": false, "isRepeatable": true},
+      {"name": "result", "type": "Any", "isOptional": false, "isRepeatable": true},
+      {"name": "else", "type": "Any", "isOptional": true}
+    ]
+  },
+  {
+    "name": "TIME",
+    "parameters": [
+      {"name": "hour", "type": "Integer", "isOptional": false},
+      {"name": "minute", "type": "Integer", "isOptional": false},
+      {"name": "second", "type": "Integer", "isOptional": false}
+    ]
+  },
+  {
+    "name": "TIMEVALUE",
+    "parameters": [
+      {"name": "time_text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "TODAY",
+    "parameters": []
+  },
+  {
+    "name": "TOPN",
+    "parameters": [
+      {"name": "n_value", "type": "Integer", "isOptional": false},
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "orderBy_expression", "type": "Any", "isOptional": false, "isRepeatable": true},
+      {"name": "order", "type": "Integer", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "TOTALMTD",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false},
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "filter", "type": "Boolean", "isOptional": true}
+    ]
+  },
+  {
+    "name": "TOTALQTD",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false},
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "filter", "type": "Boolean", "isOptional": true}
+    ]
+  },
+  {
+    "name": "TOTALYTD",
+    "parameters": [
+      {"name": "expression", "type": "Any", "isOptional": false},
+      {"name": "dates", "type": "Column", "isOptional": false},
+      {"name": "filter", "type": "Boolean", "isOptional": true},
+      {"name": "year_end_date", "type": "String", "isOptional": true}
+    ]
+  },
+  {
+    "name": "TREATAS",
+    "parameters": [
+      {"name": "table_expression", "type": "Table", "isOptional": false},
+      {"name": "column", "type": "Column", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "TRIM",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "TRUE",
+    "parameters": []
+  },
+  {
+    "name": "TRUNC",
+    "parameters": [
+      {"name": "number", "type": "Decimal", "isOptional": false},
+      {"name": "num_digits", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "UNION",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false, "isRepeatable": true}
+    ]
+  },
+  {
+    "name": "UPPER",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "USERELATIONSHIP",
+    "parameters": [
+      {"name": "columnName1", "type": "Column", "isOptional": false},
+      {"name": "columnName2", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "USERNAME",
+    "parameters": []
+  },
+  {
+    "name": "USERPRINCIPALNAME",
+    "parameters": []
+  },
+  {
+    "name": "UTCNOW",
+    "parameters": []
+  },
+  {
+    "name": "UTCTODAY",
+    "parameters": []
+  },
+  {
+    "name": "VALUE",
+    "parameters": [
+      {"name": "text", "type": "String", "isOptional": false}
+    ]
+  },
+  {
+    "name": "VALUES",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "VAR.P",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "VAR.S",
+    "parameters": [
+      {"name": "column", "type": "Column", "isOptional": false}
+    ]
+  },
+  {
+    "name": "VARX.P",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "VARX.S",
+    "parameters": [
+      {"name": "table", "type": "Table", "isOptional": false},
+      {"name": "expression", "type": "Any", "isOptional": false}
+    ]
+  },
+  {
+    "name": "WEEKDAY",
+    "parameters": [
+      {"name": "date", "type": "DateTime", "isOptional": false},
+      {"name": "return_type", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "WEEKNUM",
+    "parameters": [
+      {"name": "date", "type": "DateTime", "isOptional": false},
+      {"name": "return_type", "type": "Integer", "isOptional": true}
+    ]
+  },
+  {
+    "name": "YEAR",
+    "parameters": [
+      {"name": "date", "type": "DateTime", "isOptional": false}
+    ]
+  },
+  {
+    "name": "YEARFRAC",
+    "parameters": [
+      {"name": "start_date", "type": "DateTime", "isOptional": false},
+      {"name": "end_date", "type": "DateTime", "isOptional": false},
+      {"name": "basis", "type": "Integer", "isOptional": true}
+    ]
+  }
+]
