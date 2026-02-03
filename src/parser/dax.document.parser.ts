@@ -1,53 +1,10 @@
 import * as vscode from 'vscode';
+import { VariableInfo, TableInfo, MeasureInfo, FunctionCall, TableColumnMap, ExclusionRange, ScopeBlock } from '../types';
 import { SymbolTable, Symbol, SymbolKind, SymbolMetadata } from '../symbol/dax.symbol.table';
+import { findScopeBlocks } from '../diagnostics/dax.diagnostics.scope'
+import { runDiagnostics } from '../diagnostics';
 
-export interface VariableInfo {
-  name: string;
-  declarationLine: number;
-  declarationRange: vscode.Range;
-  usageRanges: vscode.Range[];
-  parentMeasure?: string;
-}
-
-export interface TableInfo {
-  name: string;
-  usageRanges: vscode.Range[];
-  columns: Set<string>;
-  scope?: vscode.Range;
-}
-
-export interface MeasureInfo {
-  name: string;
-  declarationRange?: vscode.Range;
-  usageRanges: vscode.Range[];
-  scope?: vscode.Range;
-}
-
-export interface Diagnostic {
-  range: vscode.Range;
-  message: string;
-  severity: 'error' | 'warning' | 'info';
-  code?: string;
-}
-
-export interface TableColumnMap {
-  tables: Map<string, TableInfo>;
-  measures: Map<string, MeasureInfo>;
-  variables: VariableInfo[];
-  exclusionRanges: vscode.Range[];
-  diagnostics: Diagnostic[];
-}
-
-interface ExclusionRange {
-  start: number;
-  end: number;
-}
-
-interface ScopeBlock {
-  type: 'VAR' | 'RETURN';
-  index: number;
-  position: vscode.Position;
-}
+const daxFunctions = require('../dax.functions.json');
 
 export class DaxDocumentParser {
   private symbolTable: SymbolTable;
@@ -118,6 +75,47 @@ export class DaxDocumentParser {
     const before = text.lastIndexOf("[", index);
     const after = text.lastIndexOf("]", index);
     return before > after && before !== -1;
+  }
+
+  // Helper for arg count, to ignore { }
+  private stripTableConstructors(input: string): string {
+    let result = '';
+    let braceDepth = 0;
+    let inString = false;
+
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+
+      // String handling
+      if (char === '"') {
+        if (inString && input[i + 1] === '"') {
+          i++; // escaped quote
+          continue;
+        }
+        inString = !inString;
+      }
+
+      if (!inString) {
+        if (char === '{') {
+          braceDepth++;
+          if (braceDepth === 1) {
+            result += '{}';
+          }
+          continue;
+        }
+
+        if (char === '}') {
+          braceDepth--;
+          continue;
+        }
+      }
+
+      if (braceDepth === 0) {
+        result += char;
+      }
+    }
+
+    return result;
   }
   
   // Parse all Table[Column] references and track table positions
@@ -578,86 +576,115 @@ export class DaxDocumentParser {
     
     return variables;
   }
-  
-  // Generate diagnostics
-  private generateDiagnostics(
+
+  // Parse all function calls
+  parseFunctionCalls(
     document: vscode.TextDocument,
-    variables: VariableInfo[],
-    scopeBlocks: ScopeBlock[]
-  ): Diagnostic[] {
-    const diagnostics: Diagnostic[] = [];
-    
-    // 1. Check for unused variables
-    for (const varInfo of variables) {
-      if (varInfo.usageRanges.length === 0) {
-        diagnostics.push({
-          range: varInfo.declarationRange,
-          message: `Variable '${varInfo.name}' is declared but never used`,
-          severity: 'warning',
-          code: 'unused-variable'
-        });
-      }
-    }
-    
-    // 2. Check VAR/RETURN order violations
-    // Group scope blocks by their nesting level
+    exclusionRanges: ExclusionRange[]
+  ): FunctionCall[] {
     const text = document.getText();
-    let currentDepth = 0;
-    const varReturnPairs: { vars: ScopeBlock[], returns: ScopeBlock[] }[] = [];
-    
-    for (const block of scopeBlocks) {
-      if (block.type === 'VAR') {
-        // Start of a new scope
-        if (!varReturnPairs[currentDepth]) {
-          varReturnPairs[currentDepth] = { vars: [], returns: [] };
-        }
-        varReturnPairs[currentDepth].vars.push(block);
-      } else if (block.type === 'RETURN') {
-        // Check if there are VARs before this RETURN
-        if (!varReturnPairs[currentDepth]) {
-          varReturnPairs[currentDepth] = { vars: [], returns: [] };
-        }
-        varReturnPairs[currentDepth].returns.push(block);
-        
-        // Check for VARs after this RETURN at the same depth
-        const subsequentVars = scopeBlocks.filter(
-          b => b.type === 'VAR' && b.index > block.index
-        );
-        
-        if (subsequentVars.length > 0) {
-          const nextVar = subsequentVars[0];
-          
-          // If there's a VAR after a RETURN without another RETURN in between
-          const returnsBetween = scopeBlocks.filter(
-            b => b.type === 'RETURN' && b.index > block.index && b.index < nextVar.index
-          );
-          
-          if (returnsBetween.length === 0) {
-            diagnostics.push({
-              range: new vscode.Range(nextVar.position, nextVar.position.translate(0, 3)),
-              message: 'VAR declaration appears after RETURN statement',
-              severity: 'error',
-              code: 'var-after-return'
-            });
+    const functionCalls: FunctionCall[] = [];
+
+    // Get set of all function names
+    const knownFunctionNames = new Set(daxFunctions.map((f: any) => f.name));
+
+    // Regex to find identifiers followed by an open parens
+    const functionPattern = /\b([A-Z_][A-Z0-9_.]*)\s*\(/gi;
+    let match;
+
+    while ((match = functionPattern.exec(text)) !== null) {
+      const functionName = match[1].toUpperCase();
+      const openParenIndex = match.index + match[0].length - 1;
+
+      // Check if it's a known function
+      if (!knownFunctionNames.has(functionName) || this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
+        continue;
+      }
+
+      // Find the matching closing parens
+      let depth = 1;
+      let closeParenIndex = -1;
+      let currentIndex = openParenIndex + 1;
+
+      while (currentIndex < text.length) {
+        // Skip exclusion, string or comment
+        let inExclusion = false;
+        for (const range of exclusionRanges) {
+          if (currentIndex >= range.start && currentIndex < range.end) {
+            currentIndex = range.end;
+            inExclusion = true;
+            break;
           }
         }
+        if (inExclusion) {
+          continue;
+        }
+        if (currentIndex >= text.length) break;
+
+        const char = text[currentIndex];
+        if (char === '(') {
+          depth++;
+        } else if (char === ')') {
+          depth--;
+          if (depth === 0) {
+            closeParenIndex = currentIndex;
+            break;
+          }
+        }
+        currentIndex++;
       }
-    }
-    
-    // 3. Check for VARs without corresponding RETURN
-    for (const pair of varReturnPairs) {
-      if (pair && pair.vars.length > 0 && pair.returns.length === 0) {
-        const lastVar = pair.vars[pair.vars.length - 1];
-        diagnostics.push({
-          range: new vscode.Range(lastVar.position, lastVar.position.translate(0, 3)),
-          message: 'VAR declaration without corresponding RETURN statement',
-          severity: 'error',
-          code: 'missing-return'
-        });
+
+      if (closeParenIndex === -1) {
+        // Malformed call, no closing parens
+        continue;
       }
+
+      // Count parameters within range
+      const rawArgs = text.substring(openParenIndex + 1, closeParenIndex);
+      const sanitizedArgs = this.stripTableConstructors(rawArgs);
+
+      let parameterCount = 0;
+
+      if (sanitizedArgs.trim().length > 0) {
+        let commaCount = 0;
+        let parenDepth = 0;
+        let inString = false;
+
+        for (let i = 0; i < sanitizedArgs.length; i++) {
+          const char = sanitizedArgs[i];
+
+          if (char === '"') {
+            inString = !inString;
+            continue;
+          }
+
+          if (inString) continue;
+
+          if (char === '(') parenDepth++;
+          else if (char === ')') parenDepth--;
+          else if (char === ',' && parenDepth === 0) {
+            commaCount++;
+          }
+        }
+
+        parameterCount = commaCount + 1;
+      }
+
+      // Create FunctionCall object
+      const functionNameStartIndex = match.index;
+      const functionNameRange = new vscode.Range(
+        document.positionAt(functionNameStartIndex),
+        document.positionAt(functionNameStartIndex + match[1].length)
+      );
+
+      functionCalls.push({
+        name: functionName,
+        parameterCount: parameterCount,
+        range: [functionNameRange]
+      });
     }
-    
-    return diagnostics;
+
+    return functionCalls;
   }
   
   // Caching
@@ -683,34 +710,7 @@ export class DaxDocumentParser {
     const measures = this.parseMeasures(document, exclusionRanges);
     const variables = this.parseVariables(document, exclusionRanges, measures);
     const tables = this.parseTableColumns(document, exclusionRanges, variables);
-    
-    // Find scope blocks for diagnostics
-    const scopeBlocks: ScopeBlock[] = [];
-    const varKeywordPattern = /\bVAR\b/gi;
-    let match;
-    while ((match = varKeywordPattern.exec(text)) !== null) {
-      if (!this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
-        scopeBlocks.push({ 
-          type: 'VAR',
-          index: match.index,
-          position: document.positionAt(match.index)
-        });
-      }
-    }
-    const returnPattern = /\bRETURN\b/gi;
-    while ((match = returnPattern.exec(text)) !== null) {
-      if (!this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
-        scopeBlocks.push({ 
-          type: 'RETURN',
-          index: match.index,
-          position: document.positionAt(match.index)
-        });
-      }
-    }
-    scopeBlocks.sort((a, b) => a.index - b.index);
-    
-    // Generate diagnostics
-    const diagnostics = this.generateDiagnostics(document, variables, scopeBlocks);
+    const functionCalls = this.parseFunctionCalls(document, exclusionRanges);
     
     // Cache and return
     const result = {
@@ -718,19 +718,18 @@ export class DaxDocumentParser {
       measures,
       variables,
       exclusionRanges: this.getExclusionRanges(document),
-      diagnostics
+      diagnostics: [],
+      functionCalls
     };
+
+    // Run diagnostics
+    const scopeBlocks = findScopeBlocks(document, exclusionRanges);
+    result.diagnostics = runDiagnostics(document, result, scopeBlocks); 
     
     this.cachedUri = document.uri;
     this.cachedVersion = document.version;
     this.cachedResult = result;
     
     return result;
-  }
-  
-  // Method to get diagnostics
-  getDiagnostics(document: vscode.TextDocument): Diagnostic[] {
-    const result = this.parse(document);
-    return result.diagnostics;
   }
 }

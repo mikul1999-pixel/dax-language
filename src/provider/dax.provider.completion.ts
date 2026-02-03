@@ -1,13 +1,11 @@
 import * as vscode from 'vscode';
-import { DaxDocumentParser, TableColumnMap } from '../parser/dax.document.parser';
+import { DaxDocumentParser } from '../parser/dax.document.parser';
 
 const daxFunctions = require('../dax.functions.json');
 const daxKeywords = require('../dax.keywords.json');
 const daxSnippets = require('../dax.snippets.json');
 
 export class DaxCompletionProvider implements vscode.CompletionItemProvider {
-  private currentDecoration?: vscode.TextEditorDecorationType;
-  private currentEditor?: vscode.TextEditor;
 
   constructor(private parser: DaxDocumentParser) {
   }

@@ -7,6 +7,8 @@ import { DaxSemanticTokenProvider } from './provider/dax.provider.token';
 import { DaxDefinitionProvider } from './provider/dax.provider.definition';
 import { DaxReferenceProvider } from './provider/dax.provider.reference';
 import { DaxRenameProvider } from './provider/dax.provider.rename';
+import { DaxDiagnosticsProvider } from './provider/dax.provider.diagnostics';
+import { registerConditionalProvider } from './settings';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('DAX Language is now active');
@@ -69,6 +71,17 @@ export function activate(context: vscode.ExtensionContext) {
     definitionProvider,
     referenceProvider,
     renameProvider
+  );
+
+  // Diagnostics
+  registerConditionalProvider(
+    context,
+    'dax.enableDiagnostics',
+    () => {
+      const diagnosticsProvider = new DaxDiagnosticsProvider(parser);
+      diagnosticsProvider.register(context);
+      return { dispose: () => {} };
+    }
   );
 
 }

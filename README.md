@@ -16,11 +16,14 @@ Compatible with ```.dax``` file types
 - **Hover Documentation** - View function descriptions, syntax, and return types on hover
 - **Parameter Help** - Signature help when typing within a function
 - **Snippets Library** - Auto-insert common DAX patterns from local library
+- **Diagnostics (experimental)** - Simple warnings/errors for Var usage & Function arg counts
 
 ## Usage
 - Autocomplete functions and keywords while typing
 - Type ```dax:``` to browse code snippets. Refer to ```src/dax.snippets.json``` in the repo for list of specialized patterns
 
+## Extension Settings
+- "Enable Diagnostics" toggle DAX warnings & error checking
 
 
 
