@@ -160,7 +160,7 @@ export function runScopeDiagnostics(
     if (!nextReturn) {
       diagnostics.push({
         range: new vscode.Range(varBlock.position, varBlock.position.translate(0, 3)),
-        message: 'VAR declaration without corresponding RETURN statement',
+        message: 'VAR declaration without corresponding RETURN or EVALUATE statement',
         severity: 'error',
         code: 'missing-return'
       });

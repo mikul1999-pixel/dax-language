@@ -1,67 +1,60 @@
 import * as vscode from 'vscode';
 import { VariableInfo, TableInfo, MeasureInfo, FunctionCall, TableColumnMap, ExclusionRange, ScopeBlock } from '../types';
-import { SymbolTable, Symbol, SymbolKind, SymbolMetadata } from '../symbol/dax.symbol.table';
-import { findScopeBlocks } from '../diagnostics/dax.diagnostics.scope'
+import { SymbolTable, SymbolKind } from '../symbol/dax.symbol.table';
+import { findScopeBlocks } from '../diagnostics/dax.diagnostics.scope';
 import { runDiagnostics } from '../diagnostics';
 
 const daxFunctions = require('../dax.functions.json');
 
 export class DaxDocumentParser {
   private symbolTable: SymbolTable;
+  private cachedUri?: vscode.Uri;
+  private cachedVersion?: number;
+  private cachedResult?: TableColumnMap;
   
   constructor() {
     this.symbolTable = new SymbolTable();
   }
   
-  // Get the symbol table
   getSymbolTable(): SymbolTable {
     return this.symbolTable;
   }
   
-  // Find all ranges that should be excluded from parsing
+  // ---------------- Exclusion range ----------------
+  
+  // Find all ranges to exclude from parsing. comments and strings
   private findExclusionRanges(text: string): ExclusionRange[] {
     const ranges: ExclusionRange[] = [];
     
-    // Find all single-line comments
-    const singleLinePattern = /(?:\/\/|--)[^\n]*/g;
-    let match;
-    while ((match = singleLinePattern.exec(text)) !== null) {
-      ranges.push({ start: match.index, end: match.index + match[0].length });
-    }
+    // Single line comments
+    this.addMatches(ranges, text, /(?:\/\/|--)[^\n]*/g);
     
-    // Find all multi-line comments
-    const multiLinePattern = /\/\*[\s\S]*?\*\//g;
-    while ((match = multiLinePattern.exec(text)) !== null) {
-      ranges.push({ start: match.index, end: match.index + match[0].length });
-    }
+    // Multi line comments
+    this.addMatches(ranges, text, /\/\*[\s\S]*?\*\//g);
     
-    // Find all string literals
-    const stringPattern = /"(?:[^"\\]|\\.)*"/g;
-    while ((match = stringPattern.exec(text)) !== null) {
-      ranges.push({ start: match.index, end: match.index + match[0].length });
-    }
+    // Strings
+    this.addMatches(ranges, text, /"(?:[^"\\]|\\.)*"/g);
     
-    // Sort by start position
-    ranges.sort((a, b) => a.start - b.start);
-    
-    return ranges;
+    return ranges.sort((a, b) => a.start - b.start);
   }
   
-  // Check if a position is inside any exclusion range
-  private isInExclusionRange(index: number, length: number, exclusionRanges: ExclusionRange[]): boolean {
-    for (const range of exclusionRanges) {
-      if (index < range.end && index + length > range.start) {
-        return true;
-      }
+  // Helper to add regex matches to exclusion ranges
+  private addMatches(ranges: ExclusionRange[], text: string, pattern: RegExp): void {
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      ranges.push({ start: match.index, end: match.index + match[0].length });
     }
-    return false;
+  }
+  
+  // Check if position overlaps with exclusion range
+  private isInExclusionRange(index: number, length: number, exclusionRanges: ExclusionRange[]): boolean {
+    const end = index + length;
+    return exclusionRanges.some(range => index < range.end && end > range.start);
   }
 
-  // Convert exclusion ranges to vscode.Range
+  // Convert to vscode.range
   getExclusionRanges(document: vscode.TextDocument): vscode.Range[] {
-    const text = document.getText();
-    const exclusionRanges = this.findExclusionRanges(text);
-    
+    const exclusionRanges = this.findExclusionRanges(document.getText());
     return exclusionRanges.map(range => 
       new vscode.Range(
         document.positionAt(range.start),
@@ -70,14 +63,25 @@ export class DaxDocumentParser {
     );
   }
   
-  // Check if a position is inside brackets
+  // --------- Gen helpers ---------
+  
+  // Check if position is inside brackets
   private isInsideBrackets(text: string, index: number): boolean {
-    const before = text.lastIndexOf("[", index);
-    const after = text.lastIndexOf("]", index);
-    return before > after && before !== -1;
+    const lastOpen = text.lastIndexOf("[", index);
+    const lastClose = text.lastIndexOf("]", index);
+    return lastOpen > lastClose && lastOpen !== -1;
   }
 
-  // Helper for arg count, to ignore { }
+  // Find the next non whitespace character
+  private getNextNonWhitespace(text: string, startIndex: number): { char: string; index: number } | null {
+    let index = startIndex;
+    while (index < text.length && /\s/.test(text[index])) {
+      index++;
+    }
+    return index < text.length ? { char: text[index], index } : null;
+  }
+
+  // Strip table constructors { }
   private stripTableConstructors(input: string): string {
     let result = '';
     let braceDepth = 0;
@@ -86,10 +90,9 @@ export class DaxDocumentParser {
     for (let i = 0; i < input.length; i++) {
       const char = input[i];
 
-      // String handling
       if (char === '"') {
         if (inString && input[i + 1] === '"') {
-          i++; // escaped quote
+          i++; // Skip escaped quote
           continue;
         }
         inString = !inString;
@@ -103,7 +106,6 @@ export class DaxDocumentParser {
           }
           continue;
         }
-
         if (char === '}') {
           braceDepth--;
           continue;
@@ -118,141 +120,179 @@ export class DaxDocumentParser {
     return result;
   }
   
-  // Parse all Table[Column] references and track table positions
-  parseTableColumns(document: vscode.TextDocument, exclusionRanges: ExclusionRange[], variables: VariableInfo[] = []): Map<string, TableInfo> {
+  // Create a vscode.Range from text positions
+  private createRange(document: vscode.TextDocument, start: number, length: number): vscode.Range {
+    return new vscode.Range(
+      document.positionAt(start),
+      document.positionAt(start + length)
+    );
+  }
+
+  // Create position key for dedupe
+  private createPositionKey(position: vscode.Position): string {
+    return `${position.line}:${position.character}`;
+  }
+  
+  // --------- Parsing tables & columns ---------
+  
+  // Parse Table[Column] + standalone Table
+  parseTableColumns(
+    document: vscode.TextDocument, 
+    exclusionRanges: ExclusionRange[], 
+    variables: VariableInfo[] = []
+  ): Map<string, TableInfo> {
     const text = document.getText();
     const tables = new Map<string, TableInfo>();
-
-    // Create a quick lookup for variable ranges to avoid collisions
-    const variableRanges = new Set<string>();
-    for (const v of variables) {
-      const start = v.declarationRange.start;
-      variableRanges.add(`${start.line}:${start.character}`);
-      for (const usage of v.usageRanges) {
-        variableRanges.add(`${usage.start.line}:${usage.start.character}`);
-      }
-    }
-
-    // Track positions already added
+    
+    // Create lookup sets
+    const variablePositions = this.createVariablePositionSet(variables);
     const addedPositions = new Set<string>();
     
-    // Pattern: TableName[ColumnName] or 'Table Name'[ColumnName]
-    // 1: quoted table name, 2: unquoted table name, 3: column name
-    const pattern = /(?:'([^']+)'|(\b[A-Z_][A-Z0-9_]*))\[\s*([^\]]+)\s*\]/gi;
+    // Parse Table[Column] patterns
+    this.parseTableColumnReferences(document, text, exclusionRanges, tables, addedPositions);
     
+    // Parse standalone Table references
+    this.parseStandaloneTableReferences(document, text, exclusionRanges, tables, variablePositions, addedPositions);
+    
+    return tables;
+  }
+
+  // Create set of variable positions
+  private createVariablePositionSet(variables: VariableInfo[]): Set<string> {
+    const positions = new Set<string>();
+    for (const v of variables) {
+      positions.add(this.createPositionKey(v.declarationRange.start));
+      v.usageRanges.forEach(range => positions.add(this.createPositionKey(range.start)));
+    }
+    return positions;
+  }
+
+  // Parse Table[Column] or 'Table Name'[Column] patterns
+  private parseTableColumnReferences(
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[],
+    tables: Map<string, TableInfo>,
+    addedPositions: Set<string>
+  ): void {
+    // Pattern: 'Table Name'[Column] or TableName[Column]
+    const pattern = /(?:'([^']+)'|(\b[A-Z_][A-Z0-9_]*))\[\s*([^\]]+)\s*\]/gi;
     let match;
+    
     while ((match = pattern.exec(text)) !== null) {
-      // Skip if in exclusion range
       if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
         continue;
       }
       
-      const tableName = (match[1] || match[2]).trim();
-      const columnName = match[3].trim();
+      const tableName = (match[1] || match[2])?.trim();
+      const columnName = match[3]?.trim();
       
-      // Skip empty
-      if (!columnName || !tableName) {
+      if (!tableName || !columnName) {
         continue;
       }
       
-      // Get or create TableInfo
-      if (!tables.has(tableName)) {
-        tables.set(tableName, {
-          name: tableName,
-          usageRanges: [],
-          columns: new Set(),
-          scope: new vscode.Range(
-            document.positionAt(match.index),
-            document.positionAt(match.index + match[0].length)
-          )
-        });
-      }
-      
-      const tableInfo = tables.get(tableName)!;
+      // Get or create table info
+      const tableInfo = this.getOrCreateTableInfo(tables, tableName, document, match.index, match[0].length);
       
       // Add column
       tableInfo.columns.add(columnName);
       
-      // Calculate table name position
-      let tableStartIndex: number;
-      let tableLength: number;
+      // Add table reference
+      const isQuoted = !!match[1];
+      const tableStartIndex = match.index + (isQuoted ? 1 : 0);
+      const tableLength = (match[1] || match[2]).length;
+      const tableRange = this.createRange(document, tableStartIndex, tableLength);
       
-      if (match[1]) {
-        tableStartIndex = match.index + 1;
-        tableLength = match[1].length;
-      } else {
-        tableStartIndex = match.index;
-        tableLength = match[2].length;
-      }
-      
-      const tableStartPos = document.positionAt(tableStartIndex);
-      const tableEndPos = document.positionAt(tableStartIndex + tableLength);
-      const tableRange = new vscode.Range(tableStartPos, tableEndPos);
-      
-      const tablePosKey = `${tableStartPos.line}:${tableStartPos.character}`;
-      if (!addedPositions.has(tablePosKey)) {
+      const posKey = this.createPositionKey(tableRange.start);
+      if (!addedPositions.has(posKey)) {
         tableInfo.usageRanges.push(tableRange);
-        addedPositions.add(tablePosKey);
+        addedPositions.add(posKey);
       }
       
       // Add column to symbol table
-      const columnStartIndex = match.index + match[0].indexOf(columnName);
-      const columnStartPos = document.positionAt(columnStartIndex);
-      const columnEndPos = document.positionAt(columnStartIndex + columnName.length);
-      const columnRange = new vscode.Range(columnStartPos, columnEndPos);
-      
-      if (!this.symbolTable.hasSymbol(columnName, SymbolKind.Column, tableName)) {
-        this.symbolTable.addSymbol({
-          name: columnName,
-          kind: SymbolKind.Column,
-          referenceRanges: [columnRange],
-          metadata: { tableContext: tableName }
-        });
-      } else {
-        this.symbolTable.addReference(columnName, SymbolKind.Column, columnRange, tableName);
-      }
+      this.addColumnSymbol(document, match, columnName, tableName);
     }
+  }
+
+  // Get or create table info
+  private getOrCreateTableInfo(
+    tables: Map<string, TableInfo>,
+    tableName: string,
+    document: vscode.TextDocument,
+    matchIndex: number,
+    matchLength: number
+  ): TableInfo {
+    if (!tables.has(tableName)) {
+      tables.set(tableName, {
+        name: tableName,
+        usageRanges: [],
+        columns: new Set(),
+        scope: this.createRange(document, matchIndex, matchLength)
+      });
+    }
+    return tables.get(tableName)!;
+  }
+
+  // Add column to symbol table
+  private addColumnSymbol(
+    document: vscode.TextDocument,
+    match: RegExpExecArray,
+    columnName: string,
+    tableName: string
+  ): void {
+    const columnStartIndex = match.index + match[0].indexOf(columnName);
+    const columnRange = this.createRange(document, columnStartIndex, columnName.length);
     
-    // Find standalone table references
+    if (!this.symbolTable.hasSymbol(columnName, SymbolKind.Column, tableName)) {
+      this.symbolTable.addSymbol({
+        name: columnName,
+        kind: SymbolKind.Column,
+        referenceRanges: [columnRange],
+        metadata: { tableContext: tableName }
+      });
+    } else {
+      this.symbolTable.addReference(columnName, SymbolKind.Column, columnRange, tableName);
+    }
+  }
+
+  // Parse standalone table references
+  private parseStandaloneTableReferences(
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[],
+    tables: Map<string, TableInfo>,
+    variablePositions: Set<string>,
+    addedPositions: Set<string>
+  ): void {
     for (const [tableName, tableInfo] of tables.entries()) {
-      const escapedName = tableName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const pattern = new RegExp(`\\b${escapedName}\\b`, 'gi');
-      
+      const pattern = new RegExp(`\\b${this.escapeRegex(tableName)}\\b`, 'gi');
       let match;
+      
       while ((match = pattern.exec(text)) !== null) {
-        if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
-          continue;
-        }
-        
-        if (this.isInsideBrackets(text, match.index)) {
+        if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges) ||
+            this.isInsideBrackets(text, match.index)) {
           continue;
         }
         
         const startPos = document.positionAt(match.index);
-        const endPos = document.positionAt(match.index + match[0].length);
-        const posKey = `${startPos.line}:${startPos.character}`;
+        const posKey = this.createPositionKey(startPos);
         
-        // Skip if this is a variable
-        if (variableRanges.has(posKey)) {
+        // Skip if position is variable or already added
+        if (variablePositions.has(posKey) || addedPositions.has(posKey)) {
           continue;
         }
 
-        // Skip if followed by ( (function call) or = measure declaration
-        let nextNonWhitespace = match.index + match[0].length;
-        while (nextNonWhitespace < text.length && /\s/.test(text[nextNonWhitespace])) {
-          nextNonWhitespace++;
-        }
-        if (nextNonWhitespace < text.length && (text[nextNonWhitespace] === '(' || text[nextNonWhitespace] === '=')) {
+        // Skip if followed by ( or =
+        const next = this.getNextNonWhitespace(text, match.index + match[0].length);
+        if (next && (next.char === '(' || next.char === '=')) {
           continue;
         }
 
-        if (!addedPositions.has(posKey)) {
-          tableInfo.usageRanges.push(new vscode.Range(startPos, endPos));
-          addedPositions.add(posKey);
-        }
+        tableInfo.usageRanges.push(this.createRange(document, match.index, match[0].length));
+        addedPositions.add(posKey);
       }
       
-      // Add table to symbol table with first reference as scope
+      // Add table to symbol table
       if (!this.symbolTable.hasSymbol(tableName, SymbolKind.Table)) {
         this.symbolTable.addSymbol({
           name: tableName,
@@ -262,75 +302,73 @@ export class DaxDocumentParser {
         });
       }
     }
-    
-    return tables;
   }
+
+  // Escape special regex characters
+  private escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  
+  // --------- Parsing measures ---------
   
   // Parse measure definitions and references
   parseMeasures(document: vscode.TextDocument, exclusionRanges: ExclusionRange[]): Map<string, MeasureInfo> {
     const text = document.getText();
     const measures = new Map<string, MeasureInfo>();
     
-    // Pattern 1: [MeasureName] := expression (measure definition)
-    const defPattern1 = /\[\s*([^\]]+)\s*\]\s*:=/g;
+    // Pattern 1: [MeasureName] := 
+    this.parseMeasureDefinitions(document, text, exclusionRanges, measures, /\[\s*([^\]]+)\s*\]\s*:=/g);
     
+    // Pattern 2: MEASURE Table[MeasureName] = 
+    this.parseMeasureDefinitions(
+      document, 
+      text, 
+      exclusionRanges, 
+      measures, 
+      /\bMEASURE\s+(?:'([^']+)'|([A-Z_][A-Z0-9_]*))\[\s*([^\]]+)\s*\]\s*=/gi,
+      true
+    );
+    
+    // Pattern 3: Standalone [MeasureName]
+    this.parseMeasureReferences(document, text, exclusionRanges, measures);
+    
+    // Add measure to symbol table
+    this.addMeasuresToSymbolTable(measures);
+    
+    return measures;
+  }
+
+  // Parse measure definitions
+  private parseMeasureDefinitions(
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[],
+    measures: Map<string, MeasureInfo>,
+    pattern: RegExp,
+    isTableQualified: boolean = false
+  ): void {
     let match;
-    while ((match = defPattern1.exec(text)) !== null) {
+    
+    while ((match = pattern.exec(text)) !== null) {
       if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
         continue;
       }
       
-      const measureName = match[1].trim();
-      if (!measureName) {continue;}
-      
-      const measureStartIndex = match.index + 1; // Skip [
-      const measureStartPos = document.positionAt(measureStartIndex);
-      const measureEndPos = document.positionAt(measureStartIndex + measureName.length);
-      const measureRange = new vscode.Range(measureStartPos, measureEndPos);
-      
-      // Find scope from definition to end of expression
-      const nextDefMatch = defPattern1.exec(text);
-      const scopeEndIndex = nextDefMatch ? nextDefMatch.index : text.length;
-      defPattern1.lastIndex = match.index + match[0].length; // Reset position
-      
-      const scopeRange = new vscode.Range(
-        measureStartPos,
-        document.positionAt(scopeEndIndex)
-      );
-      
-      if (!measures.has(measureName)) {
-        measures.set(measureName, {
-          name: measureName,
-          declarationRange: measureRange,
-          usageRanges: [],
-          scope: scopeRange
-        });
-      }
-    }
-    
-    // Pattern 2: MEASURE Table[MeasureName] = expression
-    const defPattern2 = /\bMEASURE\s+(?:'([^']+)'|([A-Z_][A-Z0-9_]*))\[\s*([^\]]+)\s*\]\s*=/gi;
-    
-    while ((match = defPattern2.exec(text)) !== null) {
-      if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
+      const measureName = (isTableQualified ? match[3] : match[1])?.trim();
+      if (!measureName) {
         continue;
       }
-      
-      const measureName = match[3].trim();
-      if (!measureName) {continue;}
       
       const measureStartIndex = match.index + match[0].indexOf('[') + 1;
-      const measureStartPos = document.positionAt(measureStartIndex);
-      const measureEndPos = document.positionAt(measureStartIndex + measureName.length);
-      const measureRange = new vscode.Range(measureStartPos, measureEndPos);
+      const measureRange = this.createRange(document, measureStartIndex, measureName.length);
       
-      // Find scope
-      const nextDefMatch = defPattern2.exec(text);
-      const scopeEndIndex = nextDefMatch ? nextDefMatch.index : text.length;
-      defPattern2.lastIndex = match.index + match[0].length;
+      // Find scope to next definition or end of text
+      const nextMatch = pattern.exec(text);
+      const scopeEndIndex = nextMatch ? nextMatch.index : text.length;
+      pattern.lastIndex = match.index + match[0].length;
       
       const scopeRange = new vscode.Range(
-        measureStartPos,
+        measureRange.start,
         document.positionAt(scopeEndIndex)
       );
       
@@ -343,60 +381,41 @@ export class DaxDocumentParser {
         });
       }
     }
+  }
+
+  // Parse standalone [measure] references
+  private parseMeasureReferences(
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[],
+    measures: Map<string, MeasureInfo>
+  ): void {
+    const pattern = /\[\s*([^\]]+)\s*\]/g;
+    let match;
     
-    // Pattern 3: Standalone [MeasureName] references
-    const refPattern = /\[\s*([^\]]+)\s*\]/g;
-    
-    while ((match = refPattern.exec(text)) !== null) {
+    while ((match = pattern.exec(text)) !== null) {
       if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
         continue;
       }
       
-      const measureName = match[1].trim();
-      if (!measureName) {continue;}
-      
-      // Check if preceded by table name
-      let beforeBracket = match.index - 1;
-      while (beforeBracket >= 0 && /\s/.test(text[beforeBracket])) {
-        beforeBracket--;
+      const measureName = match[1]?.trim();
+      if (!measureName) {
+        continue;
       }
       
-      if (beforeBracket >= 0 && text[beforeBracket] === "'") {
-        continue; // Part of 'Table'[Column]
+      // Skip if part of Table[Column] or 'Table'[Column]
+      if (this.isPrecededByTableName(text, match.index)) {
+        continue;
       }
       
-      if (
-        beforeBracket >= 0 &&
-        /[A-Z0-9_]/i.test(text[beforeBracket]) &&
-        // ensure no whitespace between identifier and '['
-        match.index === beforeBracket + 1
-      ) {
-        continue; // Part of Table[Column]
+      // Skip if definition
+      if (this.isFollowedByAssignment(text, match.index + match[0].length)) {
+        continue;
       }
       
-      // Check if followed by := or =
-      let afterBracket = match.index + match[0].length;
-      while (afterBracket < text.length && /\s/.test(text[afterBracket])) {
-        afterBracket++;
-      }
+      const measureRange = this.createRange(document, match.index + 1, measureName.length);
       
-      if (afterBracket < text.length && text[afterBracket] === ':') {
-        continue; // This is a definition [Measure] :=
-      }
-      
-      if (afterBracket < text.length && text[afterBracket] === '=') {
-        // Check if it's := or just =
-        if (afterBracket > 0 && text[afterBracket - 1] !== ':') {
-          continue;
-        }
-      }
-      
-      const measureStartIndex = match.index + 1;
-      const measureStartPos = document.positionAt(measureStartIndex);
-      const measureEndPos = document.positionAt(measureStartIndex + measureName.length);
-      const measureRange = new vscode.Range(measureStartPos, measureEndPos);
-      
-      // Add to existing measure or create new one
+      // Add to existing or create new measure
       if (!measures.has(measureName)) {
         measures.set(measureName, {
           name: measureName,
@@ -406,8 +425,50 @@ export class DaxDocumentParser {
         measures.get(measureName)!.usageRanges.push(measureRange);
       }
     }
+  }
+
+  // Check if bracket is preceded by a table name
+  private isPrecededByTableName(text: string, bracketIndex: number): boolean {
+    let pos = bracketIndex - 1;
     
-    // Add all measures to symbol table
+    // Skip whitespace
+    while (pos >= 0 && /\s/.test(text[pos])) {
+      pos--;
+    }
+    
+    // Check for quoted 'Table'[
+    if (pos >= 0 && text[pos] === "'") {
+      return true;
+    }
+    
+    // Check for unquoted Table[ 
+    if (pos >= 0 && /[A-Z0-9_]/i.test(text[pos]) && bracketIndex === pos + 1) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  // Check if position is followed by := or =
+  private isFollowedByAssignment(text: string, startIndex: number): boolean {
+    const next = this.getNextNonWhitespace(text, startIndex);
+    if (!next) {
+      return false;
+    }
+    
+    if (next.char === ':') {
+      return true;
+    }
+    
+    if (next.char === '=') {
+      return next.index > 0 && text[next.index - 1] !== ':';
+    }
+    
+    return false;
+  }
+
+  // Add parsed measures to the symbol table
+  private addMeasuresToSymbolTable(measures: Map<string, MeasureInfo>): void {
     for (const [name, info] of measures.entries()) {
       if (!this.symbolTable.hasSymbol(name, SymbolKind.Measure)) {
         this.symbolTable.addSymbol({
@@ -419,11 +480,11 @@ export class DaxDocumentParser {
         });
       }
     }
-    
-    return measures;
   }
-
-  // Parse all variable declarations
+  
+  // --------- Parsing vars ---------
+  
+  // Parse variable declarations and usages
   parseVariables(
     document: vscode.TextDocument, 
     exclusionRanges: ExclusionRange[],
@@ -433,70 +494,88 @@ export class DaxDocumentParser {
     const variables: VariableInfo[] = [];
     const declaredVars = new Map<string, VariableInfo>();
     
-    // 1. Find scope blocks. VAR and RETURN keywords
+    // Find scope blocks. VAR and RETURN
+    const scopeBlocks = this.findScopeBlocks(document, text, exclusionRanges);
+    
+    // Parse declarations
+    this.parseVariableDeclarations(document, text, exclusionRanges, scopeBlocks, measures, variables, declaredVars);
+    
+    // Parse usages
+    this.parseVariableUsages(document, text, exclusionRanges, declaredVars);
+    
+    return variables;
+  }
+
+  // Find VAR and RETURN scope blocks
+  private findScopeBlocks(
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[]
+  ): ScopeBlock[] {
     const scopeBlocks: ScopeBlock[] = [];
     
-    const varKeywordPattern = /\bVAR\b/gi;
-    let boundaryMatch;
-    while ((boundaryMatch = varKeywordPattern.exec(text)) !== null) {
-      if (!this.isInExclusionRange(boundaryMatch.index, boundaryMatch[0].length, exclusionRanges)) {
-        scopeBlocks.push({ 
-          type: 'VAR',
-          index: boundaryMatch.index,
-          position: document.positionAt(boundaryMatch.index)
-        });
-      }
-    }
-
-    const returnPattern = /\bRETURN\b/gi;
-    while ((boundaryMatch = returnPattern.exec(text)) !== null) {
-      if (!this.isInExclusionRange(boundaryMatch.index, boundaryMatch[0].length, exclusionRanges)) {
-        scopeBlocks.push({ 
-          type: 'RETURN',
-          index: boundaryMatch.index,
-          position: document.positionAt(boundaryMatch.index)
-        });
-      }
-    }
+    this.addScopeBlocks(scopeBlocks, document, text, exclusionRanges, /\bVAR\b/gi, 'VAR');
+    this.addScopeBlocks(scopeBlocks, document, text, exclusionRanges, /\bRETURN\b/gi, 'RETURN');
     
-    scopeBlocks.sort((a, b) => a.index - b.index);
+    return scopeBlocks.sort((a, b) => a.index - b.index);
+  }
 
-    // Pattern: VAR VariableName =
-    const varPattern = /\bVAR\s+([A-Z_][A-Z0-9_]*)\s*=/gi;
-    
+  // Add scope blocks
+  private addScopeBlocks(
+    scopeBlocks: ScopeBlock[],
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[],
+    pattern: RegExp,
+    type: 'VAR' | 'RETURN'
+  ): void {
     let match;
-    while ((match = varPattern.exec(text)) !== null) {
-      // Skip if in exclusion range
+    while ((match = pattern.exec(text)) !== null) {
+      if (!this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
+        scopeBlocks.push({ 
+          type,
+          index: match.index,
+          position: document.positionAt(match.index)
+        });
+      }
+    }
+  }
+
+  // Parse variable declarations. VAR VariableName = ...
+  private parseVariableDeclarations(
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[],
+    scopeBlocks: ScopeBlock[],
+    measures: Map<string, MeasureInfo>,
+    variables: VariableInfo[],
+    declaredVars: Map<string, VariableInfo>
+  ): void {
+    const pattern = /\bVAR\s+([A-Z_][A-Z0-9_]*)\s*=/gi;
+    let match;
+    
+    while ((match = pattern.exec(text)) !== null) {
       if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
         continue;
       }
       
       const varName = match[1];
       const varStartIndex = match.index + match[0].indexOf(varName);
-      const startPos = document.positionAt(varStartIndex);
-      const endPos = document.positionAt(varStartIndex + varName.length);
-      const range = new vscode.Range(startPos, endPos);
+      const declarationRange = this.createRange(document, varStartIndex, varName.length);
       
-      // Determine scope: from this VAR start to the next VAR or RETURN
+      // Determine scope
       const scopeStartPos = document.positionAt(match.index);
-      const nextBoundary = scopeBlocks.find(b => b.index > match!.index);
+      const nextBoundary = scopeBlocks.find(b => b.index > match.index);
       const scopeEndIndex = nextBoundary ? nextBoundary.index : text.length;
-      const scopeEndPos = document.positionAt(scopeEndIndex);
-      const scopeRange = new vscode.Range(scopeStartPos, scopeEndPos);
+      const scopeRange = new vscode.Range(scopeStartPos, document.positionAt(scopeEndIndex));
 
-      // Determine parent measure
-      let parentMeasure: string | undefined;
-      for (const [name, info] of measures.entries()) {
-        if (info.scope && info.scope.contains(startPos)) {
-          parentMeasure = name;
-          break;
-        }
-      }
+      // Find parent measure
+      const parentMeasure = this.findParentMeasure(measures, declarationRange.start);
 
       const varInfo: VariableInfo = {
         name: varName,
-        declarationLine: startPos.line,
-        declarationRange: range,
+        declarationLine: declarationRange.start.line,
+        declarationRange,
         usageRanges: [],
         parentMeasure
       };
@@ -508,212 +587,197 @@ export class DaxDocumentParser {
       this.symbolTable.addSymbol({
         name: varName,
         kind: SymbolKind.Variable,
-        declarationRange: range,
+        declarationRange,
         scope: scopeRange,
         referenceRanges: [],
         metadata: { description: parentMeasure ? `in [${parentMeasure}]` : undefined }
       });
     }
+  }
+
+  // Find the parent measure
+  private findParentMeasure(measures: Map<string, MeasureInfo>, position: vscode.Position): string | undefined {
+    for (const [name, info] of measures.entries()) {
+      if (info.scope?.contains(position)) {
+        return name;
+      }
+    }
+    return undefined;
+  }
+
+  // Parse variable usages
+  private parseVariableUsages(
+    document: vscode.TextDocument,
+    text: string,
+    exclusionRanges: ExclusionRange[],
+    declaredVars: Map<string, VariableInfo>
+  ): void {
+    const pattern = /\b([A-Z_][A-Z0-9_]*)\b/gi;
+    let match;
     
-    // Find variable usages
-    const identifierPattern = /\b([A-Z_][A-Z0-9_]*)\b/gi;
-    
-    while ((match = identifierPattern.exec(text)) !== null) {
+    while ((match = pattern.exec(text)) !== null) {
       const identifier = match[1];
       const varInfo = declaredVars.get(identifier.toUpperCase());
       
-      // Skip if not a declared variable
-      if (!varInfo) {
+      if (!varInfo || 
+          this.isInExclusionRange(match.index, match[0].length, exclusionRanges) ||
+          this.isInsideBrackets(text, match.index) ||
+          this.isPrecededByQuote(text, match.index)) {
         continue;
       }
       
-      // Skip if in exclusion range
-      if (this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
+      const usageRange = this.createRange(document, match.index, identifier.length);
+      
+      // Skip the declaration itself
+      if (usageRange.start.isEqual(varInfo.declarationRange.start)) {
         continue;
       }
       
-      // Skip if inside brackets
-      if (this.isInsideBrackets(text, match.index)) {
-        continue;
-      }
-
-      // Skip if preceded by ' (quoted table name)
-      if (match.index > 0 && text[match.index - 1] === "'") {
+      // Skip if followed by =, (, or [
+      const next = this.getNextNonWhitespace(text, match.index + identifier.length);
+      if (next && /[=(\[]/.test(next.char)) {
         continue;
       }
       
-      const startPos = document.positionAt(match.index);
-      const endPos = document.positionAt(match.index + identifier.length);
-      
-      // Skip the declaration position
-      if (startPos.isEqual(varInfo.declarationRange.start)) {
-        continue;
-      }
-      
-      // Check character after identifier (skip function calls)
-      const charAfter = text[match.index + identifier.length];
-      
-      // Skip if followed by = (another declaration? invalid DAX)
-      if (charAfter && /[=]/.test(charAfter)) {
-        continue;
-      }
-      
-      // Skip if followed by ( (function call) or [ (column reference)
-      let nextNonWhitespace = match.index + identifier.length;
-      while (nextNonWhitespace < text.length && /\s/.test(text[nextNonWhitespace])) {
-        nextNonWhitespace++;
-      }
-      if (nextNonWhitespace < text.length && (text[nextNonWhitespace] === '(' || text[nextNonWhitespace] === '[')) {
-        continue;
-      }
-      
-      const usageRange = new vscode.Range(startPos, endPos);
       varInfo.usageRanges.push(usageRange);
-      
-      // Add reference to symbol table
       this.symbolTable.addReference(varInfo.name, SymbolKind.Variable, usageRange);
     }
-    
-    return variables;
   }
 
-  // Parse all function calls
+  // Check if position is preceded by a single quote
+  private isPrecededByQuote(text: string, index: number): boolean {
+    return index > 0 && text[index - 1] === "'";
+  }
+  
+  // --------- Parsing functions ---------
+  
+  // Parse all function calls with parameter counting
   parseFunctionCalls(
     document: vscode.TextDocument,
     exclusionRanges: ExclusionRange[]
   ): FunctionCall[] {
     const text = document.getText();
     const functionCalls: FunctionCall[] = [];
-
-    // Get set of all function names
-    const knownFunctionNames = new Set(daxFunctions.map((f: any) => f.name));
-
-    // Regex to find identifiers followed by an open parens
-    const functionPattern = /\b([A-Z_][A-Z0-9_.]*)\s*\(/gi;
+    const knownFunctions = new Set(daxFunctions.map((f: any) => f.name));
+    const pattern = /\b([A-Z_][A-Z0-9_.]*)\s*\(/gi;
+    
     let match;
-
-    while ((match = functionPattern.exec(text)) !== null) {
+    while ((match = pattern.exec(text)) !== null) {
       const functionName = match[1].toUpperCase();
+      
+      if (!knownFunctions.has(functionName) || 
+          this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
+        continue;
+      }
+
       const openParenIndex = match.index + match[0].length - 1;
-
-      // Check if it's a known function
-      if (!knownFunctionNames.has(functionName) || this.isInExclusionRange(match.index, match[0].length, exclusionRanges)) {
-        continue;
-      }
-
-      // Find the matching closing parens
-      let depth = 1;
-      let closeParenIndex = -1;
-      let currentIndex = openParenIndex + 1;
-
-      while (currentIndex < text.length) {
-        // Skip exclusion, string or comment
-        let inExclusion = false;
-        for (const range of exclusionRanges) {
-          if (currentIndex >= range.start && currentIndex < range.end) {
-            currentIndex = range.end;
-            inExclusion = true;
-            break;
-          }
-        }
-        if (inExclusion) {
-          continue;
-        }
-        if (currentIndex >= text.length) break;
-
-        const char = text[currentIndex];
-        if (char === '(') {
-          depth++;
-        } else if (char === ')') {
-          depth--;
-          if (depth === 0) {
-            closeParenIndex = currentIndex;
-            break;
-          }
-        }
-        currentIndex++;
-      }
-
+      const closeParenIndex = this.findMatchingCloseParen(text, openParenIndex, exclusionRanges);
+      
       if (closeParenIndex === -1) {
-        // Malformed call, no closing parens
-        continue;
+        continue; // Malformed call
       }
 
-      // Count parameters within range
-      const rawArgs = text.substring(openParenIndex + 1, closeParenIndex);
-      const sanitizedArgs = this.stripTableConstructors(rawArgs);
-
-      let parameterCount = 0;
-
-      if (sanitizedArgs.trim().length > 0) {
-        let commaCount = 0;
-        let parenDepth = 0;
-        let inString = false;
-
-        for (let i = 0; i < sanitizedArgs.length; i++) {
-          const char = sanitizedArgs[i];
-
-          if (char === '"') {
-            inString = !inString;
-            continue;
-          }
-
-          if (inString) continue;
-
-          if (char === '(') parenDepth++;
-          else if (char === ')') parenDepth--;
-          else if (char === ',' && parenDepth === 0) {
-            commaCount++;
-          }
-        }
-
-        parameterCount = commaCount + 1;
-      }
-
-      // Create FunctionCall object
-      const functionNameStartIndex = match.index;
-      const functionNameRange = new vscode.Range(
-        document.positionAt(functionNameStartIndex),
-        document.positionAt(functionNameStartIndex + match[1].length)
-      );
+      const parameterCount = this.countParameters(text, openParenIndex, closeParenIndex);
+      const functionRange = this.createRange(document, match.index, match[1].length);
 
       functionCalls.push({
         name: functionName,
-        parameterCount: parameterCount,
-        range: [functionNameRange]
+        parameterCount,
+        range: [functionRange]
       });
     }
 
     return functionCalls;
   }
-  
-  // Caching
-  private cachedUri?: vscode.Uri;
-  private cachedVersion?: number;
-  private cachedResult?: TableColumnMap;
 
+  // Find the closing parens
+  private findMatchingCloseParen(text: string, openIndex: number, exclusionRanges: ExclusionRange[]): number {
+    let depth = 1;
+    let index = openIndex + 1;
+
+    while (index < text.length) {
+      // Skip exclusion ranges
+      const inExclusion = exclusionRanges.find(r => index >= r.start && index < r.end);
+      if (inExclusion) {
+        index = inExclusion.end;
+        continue;
+      }
+
+      const char = text[index];
+      if (char === '(') {
+        depth++;
+      } else if (char === ')') {
+        depth--;
+        if (depth === 0) {
+          return index;
+        }
+      }
+      index++;
+    }
+
+    return -1;
+  }
+
+  // Count parameters. handle nested calls and table constructors
+  private countParameters(text: string, openParenIndex: number, closeParenIndex: number): number {
+    const rawArgs = text.substring(openParenIndex + 1, closeParenIndex);
+    const sanitizedArgs = this.stripTableConstructors(rawArgs).trim();
+
+    if (sanitizedArgs.length === 0) {
+      return 0;
+    }
+
+    let commaCount = 0;
+    let parenDepth = 0;
+    let inString = false;
+
+    for (const char of sanitizedArgs) {
+      if (char === '"') {
+        inString = !inString;
+        continue;
+      }
+
+      if (inString) {
+        continue;
+      }
+
+      if (char === '(') {
+        parenDepth++;
+      } else if (char === ')') {
+        parenDepth--;
+      } else if (char === ',' && parenDepth === 0) {
+        commaCount++;
+      }
+    }
+
+    return commaCount + 1;
+  }
+  
+  // --------- Execute parse & cache ---------
+  
+  // Parse the entire document
   parse(document: vscode.TextDocument): TableColumnMap {
-    // Return cached if document unchanged
+    // Return cached result if document unchanged
     if (this.cachedUri?.toString() === document.uri.toString() &&
         this.cachedVersion === document.version) {
       return this.cachedResult!;
     }
     
-    // Clear all user-defined symbols
+    // Clear symbol table
     this.symbolTable.clear();
     
-    // Get exclusion ranges first
+    // Get exclusion ranges
     const text = document.getText();
     const exclusionRanges = this.findExclusionRanges(text);
     
-    // Parse in order: measures, then variables, then tables (to handle shadowing)
+    // Parse order: measures,variables,tables,functions
     const measures = this.parseMeasures(document, exclusionRanges);
     const variables = this.parseVariables(document, exclusionRanges, measures);
     const tables = this.parseTableColumns(document, exclusionRanges, variables);
     const functionCalls = this.parseFunctionCalls(document, exclusionRanges);
     
-    // Cache and return
-    const result = {
+    // Build result
+    const result: TableColumnMap = {
       tables,
       measures,
       variables,
@@ -726,6 +790,7 @@ export class DaxDocumentParser {
     const scopeBlocks = findScopeBlocks(document, exclusionRanges);
     result.diagnostics = runDiagnostics(document, result, scopeBlocks); 
     
+    // Cache result
     this.cachedUri = document.uri;
     this.cachedVersion = document.version;
     this.cachedResult = result;

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { TableColumnMap, ScopeBlock, FunctionCall, Diagnostic } from '../types';
+import { TableColumnMap, ScopeBlock, Diagnostic } from '../types';
 import { runVariableDiagnostics } from './dax.diagnostics.variables';
 import { runScopeDiagnostics } from './dax.diagnostics.scope';
 import { runFunctionDiagnostics } from './dax.diagnostics.functions';
